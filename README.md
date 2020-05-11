@@ -1,6 +1,8 @@
 # car-image-classification
 ### Description:
-    Identify and classify automobiles using images  <br/> <br/> <br/> <br/> <br/>
+##### Identify and classify automobiles using images  
+    
+<br/> <br/> <br/> <br/> <br/>
 
 <p align="center">
   <img src="main/img/capstone_II_holder.png" width = 500><sup>(1)</sup>
