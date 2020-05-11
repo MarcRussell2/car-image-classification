@@ -1,4 +1,4 @@
-# car-image-classification
+# Dude, What's That Car?
 ### Description:
 ##### Identify and classify automobiles using images  
     
