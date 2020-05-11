@@ -1,5 +1,5 @@
 # car-image-classification
-Identify and classify automobiles using images \nFour
+Identify and classify automobiles using images  \n  \n
 
 <p align="center">
   <img src="main/img/capstone_II_holder.png" width = 500><sup>(1)</sup>
