@@ -10,7 +10,7 @@ plt.style.use('ggplot')
 plt.grid(None)
 np.random.seed(42)  # for reproducibility
 
-from skimage import color, transform, restoration, io, feature
+from skimage import color, transform, restoration, io, feature, img_as_ubyte
 
 # from tensorflow import keras
 # from tensorflow.keras.models import Sequential
@@ -66,7 +66,7 @@ class ImagePipeline(object):
         :return: Return the full path relative to the parent
         """
         cur_path = os.getcwd()
-        return os.path.join(cur_path, self.parent_dir, some_dir)
+        return os.path.join(cur_path, some_dir)
 
     def _make_new_dir(self, new_dir):
         """
@@ -108,20 +108,20 @@ class ImagePipeline(object):
         :param sub_dirs: Tuple contain all the sub dir names, else default to all sub dirs
         """
         # Get the list of raw sub dir names
-        # self.sub_dirs = os.listdir(self.parent_dir)
-        # self.sub_dirs.sort()
-        # self.sub_dirs = [os.path.join(self.parent_dir, sub_dir) for sub_dir in self.sub_dirs]
-        if sub_dirs[0] == 'all':
-            self.raw_sub_dir_names = os.listdir(self.parent_dir)
-            self.raw_sub_dir_names.sort()
-        else:
-            self.raw_sub_dir_names = sub_dirs
-        # Make label to map raw sub dir names to numeric values
-        self.label_map = self._make_label_map()
+        self.sub_dirs = os.listdir(self.parent_dir)
+        self.sub_dirs.sort()
+        self.sub_dirs = [os.path.join(self.parent_dir, sub_dir) for sub_dir in self.sub_dirs]
+        # if sub_dirs[0] == 'all':
+        #     self.raw_sub_dir_names = os.listdir(self.parent_dir)
+        #     self.raw_sub_dir_names.sort()
+        # else:
+        #     self.raw_sub_dir_names = sub_dirs
+        # # Make label to map raw sub dir names to numeric values
+        # self.label_map = self._make_label_map()
 
-        # Get the full path of the raw sub dirs
-        filtered_sub_dir = list(filter(self._accepted_dir_name, self.raw_sub_dir_names))
-        self.sub_dirs = map(self._path_relative_to_parent, filtered_sub_dir)
+        # # Get the full path of the raw sub dirs
+        # filtered_sub_dir = list(filter(self._accepted_dir_name, self.raw_sub_dir_names))
+        # self.sub_dirs = map(self._path_relative_to_parent, filtered_sub_dir)
         
 
     def read(self, sub_dirs=['all']):
@@ -150,7 +150,10 @@ class ImagePipeline(object):
                         new sub directories that we are saving to
         """
         # Use the keyword to make the new names of the sub dirs
-        new_sub_dirs = ['%s.%s' % (sub_dir, keyword) for sub_dir in self.sub_dirs]
+        # new_sub_dirs = ['%s.%s' % (sub_dir, keyword) for sub_dir in self.sub_dirs]
+        new_sub_dirs = []
+        for sub_dir in self.sub_dirs:
+            new_sub_dirs.append('%s.%s' % (sub_dir, keyword))
 
         # Loop through the sub dirs and loop through images to save images to the respective subdir
         for new_sub_dir, img_names, img_lst in zip(new_sub_dirs, self.img_names2, self.img_lst2):
@@ -158,8 +161,7 @@ class ImagePipeline(object):
             self._make_new_dir(new_sub_dir_path)
 
             for fname, img_arr in zip(img_names, img_lst):
-                io.imsave(os.path.join(new_sub_dir_path, fname), img_arr)
-
+                io.imsave(os.path.join(new_sub_dir_path, fname), img_as_ubyte(img_arr))
         self.sub_dirs = new_sub_dirs
 
     def show(self, sub_dir, img_ind):
@@ -172,6 +174,53 @@ class ImagePipeline(object):
         io.imshow(self.img_lst2[sub_dir_ind][img_ind])
         plt.show()
 
+    def transform(self, func, params, sub_dir=None, img_ind=None):
+        """
+        Takes a function and apply to every img_arr in self.img_arr.
+        Have to option to transform one as  a test case
+        :param sub_dir: The index for the image
+        :param img_ind: The index of the category of images
+        """
+        # Apply to one test case
+        if sub_dir is not None and img_ind is not None:
+            sub_dir_ind = self.label_map[sub_dir]
+            img_arr = self.img_lst2[sub_dir_ind][img_ind]
+            img_arr = func(img_arr, **params).astype(float)
+            io.imshow(img_arr)
+            plt.show()
+        # Apply the function and parameters to all the images
+        else:
+            new_img_lst2 = []
+            for img_lst in self.img_lst2:
+                new_img_lst2.append([func(img_arr, **params).astype(float) for img_arr in img_lst])
+            self.img_lst2 = new_img_lst2
+
+    def grayscale(self, sub_dir=None, img_ind=None):
+        """
+        Grayscale all the images in self.img_lst2
+        :param sub_dir: The sub dir (if you want to test the transformation on 1 image)
+        :param img_ind: The index of the image within the chosen sub dir
+        """
+        self.transform(color.rgb2gray, {}, sub_dir=sub_dir, img_ind=img_ind)
+
+    def canny(self, sub_dir=None, img_ind=None):
+        """
+        Apply the canny edge detection algorithm to all the images in self.img_lst2
+        :param sub_dir: The sub dir (if you want to test the transformation on 1 image)
+        :param img_ind: The index of the image within the chosen sub dir
+        """
+        self.transform(feature.canny, {}, sub_dir=sub_dir, img_ind=img_ind)
+
+    def tv_denoise(self, weight=2, multichannel=True, sub_dir=None, img_ind=None):
+        """
+        Apply to total variation denoise to all the images in self.img_lst2
+        :param sub_dir: The sub dir (if you want to test the transformation on 1 image)
+        :param img_ind: The index of the image within the chosen sub dir
+        """
+        self.transform(restoration.denoise_tv_chambolle,
+                       dict(weight=weight, multichannel=multichannel),
+                       sub_dir=sub_dir, img_ind=img_ind)
+
     def resize(self, shape, save=False):
         """
         Resize all images in self.img_lst2 to a uniform shape
@@ -182,18 +231,56 @@ class ImagePipeline(object):
         if save:
             shape_str = '_'.join(map(str, shape))
             self.save(shape_str)
+    
+    def _vectorize_features(self):
+        """
+        Take a list of images and vectorize all the images. Returns a feature matrix where each
+        row represents an image
+        """
+        row_tup = tuple(img_arr.ravel()[np.newaxis, :]
+                        for img_lst in self.img_lst2 for img_arr in img_lst)
+        self.test = row_tup
+        self.features = np.r_[row_tup]
+
+    def _vectorize_labels(self):
+        """
+        Convert file names to a list of y labels (in the example it would be either cat or dog, 1 or 0)
+        """
+        # Get the labels with the dimensions of the number of image files
+        self.labels = np.concatenate([np.repeat(i, len(img_names)) 
+                                     for i, img_names in enumerate(self.img_names2)])
+
+    def vectorize(self):
+        """
+        Return (feature matrix, the response) if output is True, otherwise set as instance variable.
+        Run at the end of all transformations
+        """
+        self._vectorize_features()
+        self._vectorize_labels()
 
 
 if __name__=='__main__':
-    ip = ImagePipeline('../data/subset')
+    # transformations = [rgb2gray, sobel, canny, denoise_tv_chambolle, denoise_bilateral]
+
+    ip = ImagePipeline('../data/subsubset')
     ip.read()
-    ip.show('acura_cl_1997',0)
+
+    ip.resize(shape = (64, 64, 3), save=False)
+    ip.grayscale()
+    ip.save('test_1')
+    # ip.show('acura_tl_2014',6)
+
+
+
+
+
+
+
 
 
     """
-    BUILDING THE IMAGE CLEANING PIPELINE
+    BUILDING THE (classless) IMAGE CLEANING PIPELINE
     """
-
     # img_folder = '../data/subset'
 
     # # read in an image of interest
@@ -224,3 +311,5 @@ if __name__=='__main__':
 
     # io.imshow(img_dict['acura_cl_1997'][1])  
     # plt.show()
+
+
