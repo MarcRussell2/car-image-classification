@@ -5,12 +5,21 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
-
-plt.style.use('ggplot')
+matplotlib.rcParams.update({'font.size': 22}) # for Frank
+plt.style.use('ggplot') # for not blue
 plt.grid(None)
 np.random.seed(42)  # for reproducibility
 
 from skimage import color, transform, restoration, io, feature, img_as_ubyte
+
+from tensorflow import keras
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense, Dropout, Activation, Flatten
+from tensorflow.keras.layers import Convolution2D, MaxPooling2D
+from tensorflow.keras.layers.convolutional import Conv2D
+from tensorflow.keras.utils import np_utils
+from tensorflow.keras import backend as K
+from sklearn.model_selection import train_test_split
 
 # from tensorflow import keras
 # from tensorflow.keras.models import Sequential
@@ -37,8 +46,9 @@ class ImagePipeline(object):
         Manages reading, transforming and saving images
         :param parent_dir: Name of the parent directory containing all the sub directories
         """
-        # Define the parent directory
+        # Define the Paths and Directories
         self.parent_dir = parent_dir
+        self.cur_path = os.getcwd()
 
         # Sub directory variables that are filled in when read()
         self.raw_sub_dir_names = None
@@ -74,7 +84,7 @@ class ImagePipeline(object):
         :param new_dir: The name of a new sub dir
         """
         # Make a new directory for the new transformed images
-        new_dir = self._path_relative_to_parent(new_dir)
+        new_dir = os.path.join(self.cur_path, new_dir)
         if not os.path.exists(new_dir):
             os.mkdir(new_dir)
         else:
@@ -108,20 +118,26 @@ class ImagePipeline(object):
         :param sub_dirs: Tuple contain all the sub dir names, else default to all sub dirs
         """
         # Get the list of raw sub dir names
-        self.sub_dirs = os.listdir(self.parent_dir)
-        self.sub_dirs.sort()
-        self.sub_dirs = [os.path.join(self.parent_dir, sub_dir) for sub_dir in self.sub_dirs]
-        # if sub_dirs[0] == 'all':
-        #     self.raw_sub_dir_names = os.listdir(self.parent_dir)
-        #     self.raw_sub_dir_names.sort()
-        # else:
-        #     self.raw_sub_dir_names = sub_dirs
-        # # Make label to map raw sub dir names to numeric values
-        # self.label_map = self._make_label_map()
+        # self.sub_dirs = os.listdir(self.parent_dir)
+        # self.sub_dirs.sort()
+        # self.sub_dirs = [os.path.join(self.parent_dir, sub_dir) for sub_dir in self.sub_dirs]
 
-        # # Get the full path of the raw sub dirs
-        # filtered_sub_dir = list(filter(self._accepted_dir_name, self.raw_sub_dir_names))
+
+        if sub_dirs[0] == 'all':
+            self.raw_sub_dir_names = os.listdir(self.parent_dir)
+            self.raw_sub_dir_names.sort()
+        else:
+            self.raw_sub_dir_names = sub_dirs
+
+        # Make label to map raw sub dir names to numeric values
+        self.label_map = self._make_label_map()
+
+        # Get the full path of the raw sub dirs
+        filtered_sub_dirs = list(filter(self._accepted_dir_name, self.raw_sub_dir_names))
         # self.sub_dirs = map(self._path_relative_to_parent, filtered_sub_dir)
+        for i, filtered_sub_dir in enumerate(filtered_sub_dirs):
+            filtered_sub_dirs[i] = os.path.join(self.cur_path, self.parent_dir, filtered_sub_dir)
+        self.sub_dirs = filtered_sub_dirs
         
 
     def read(self, sub_dirs=['all']):
@@ -258,6 +274,148 @@ class ImagePipeline(object):
         self._vectorize_features()
         self._vectorize_labels()
 
+    def prep_total_pipeline(self):
+        X = 0
+        y = 0
+        self.img_lst2
+        for i in range(len(self.img_lst2)):
+        #     if limit == None:
+        #         images = load_image_folder(folder_list[i])
+        #     else:
+        #         images = load_image_folder(folder_list[i], limit)
+            # cropped = crop_image_list(images, crop_size)
+            # resized = self.resize(shape = resize_dim, save=False)
+            # rot_crop = rotate_images_4x(cropped)
+            # mirrored = mirror_images(rot_crop)
+            if type(X) == int:
+                X = np.array(self.img_lst2)
+            else:
+                X = np.vstack((X, np.array(self.img_lst2)))
+            if type(y) == int:
+                y = np.zeros(len(self.img_lst2))
+            else:
+                y_arr = np.zeros(len(self.img_lst2))
+                y_arr.fill(i)
+                y = np.append(y, y_arr)
+            print('X shape: {} -=-=-=-= y shape: {}'.format(X.shape, y.shape))
+        return np.array(X), y
+
+
+def load_and_featurize_data():
+    # The data, split between train and test sets:
+    (X_train, y_train), (X_test, y_test) = cifar10.load_data()
+    print('X_train shape:', X_train.shape)
+    print(X_train.shape[0], 'train samples')
+    print(X_test.shape[0], 'test samples')
+    # Convert class vectors to binary class matrices.
+    X_train = X_train.astype('float32')
+    X_test = X_test.astype('float32')
+    X_train /= 255
+    X_test /= 255
+    y_train = to_categorical(y_train, num_classes)
+    y_test = to_categorical(y_test, num_classes)
+    return X_train, X_test, y_train, y_test
+
+def define_model(num_classes, input_shape):
+    model = Sequential()
+    model.add(Conv2D(32, (3, 3), padding='same',
+                     input_shape=input_shape))
+    model.add(Activation('relu'))
+    model.add(Conv2D(32, (3, 3)))
+    model.add(Activation('relu'))
+    model.add(MaxPooling2D(pool_size=(2, 2)))
+    model.add(Dropout(0.25))
+
+    model.add(Conv2D(64, (3, 3), padding='same'))
+    model.add(Activation('relu'))
+    model.add(Conv2D(64, (3, 3)))
+    model.add(Activation('relu'))
+    model.add(MaxPooling2D(pool_size=(2, 2)))
+    model.add(Dropout(0.25))
+
+    model.add(Flatten())
+    model.add(Dense(512))
+    model.add(Activation('relu'))
+    model.add(Dropout(0.5))
+    model.add(Dense(num_classes))
+    model.add(Activation('softmax'))
+    return model
+
+def compile_model(model, optimizer):
+    model.compile(loss='categorical_crossentropy',
+                  optimizer=optimizer,
+                  metrics=['accuracy'])
+    return model
+
+def train_model(model, data_augmentation, batch_size, epochs, 
+                X_train, X_test, y_train, y_test):
+    
+    if not data_augmentation:
+        print('Not using data augmentation.')
+        model.fit(X_train, y_train,
+                  batch_size=batch_size,
+                  epochs=epochs,
+                  validation_data=(X_test, y_test),
+                  shuffle=True)
+    else:
+        print('Using real-time data augmentation.')
+        # This will do preprocessing and realtime data augmentation:
+        datagen = ImageDataGenerator(
+            featurewise_center=False,  # set input mean to 0 over the dataset
+            samplewise_center=False,  # set each sample mean to 0
+            featurewise_std_normalization=False,  # divide inputs by std of the dataset
+            samplewise_std_normalization=False,  # divide each input by its std
+            zca_whitening=False,  # apply ZCA whitening
+            zca_epsilon=1e-06,  # epsilon for ZCA whitening
+            rotation_range=0,  # randomly rotate images in the range (degrees, 0 to 180)
+            # randomly shift images horizontally (fraction of total width)
+            width_shift_range=0.1,
+            # randomly shift images vertically (fraction of total height)
+            height_shift_range=0.1,
+            shear_range=0.,  # set range for random shear
+            zoom_range=0.,  # set range for random zoom
+            channel_shift_range=0.,  # set range for random channel shifts
+            # set mode for filling points outside the input boundaries
+            fill_mode='nearest',
+            cval=0.,  # value used for fill_mode = "constant"
+            horizontal_flip=True,  # randomly flip images
+            vertical_flip=False,  # randomly flip images
+            # set rescaling factor (applied before any other transformation)
+            rescale=None,
+            # set function that will be applied on each input
+            preprocessing_function=None,
+            # image data format, either "channels_first" or "channels_last"
+            data_format=None,
+            # fraction of images reserved for validation (strictly between 0 and 1)
+            validation_split=0.0)
+
+        # Compute quantities required for feature-wise normalization
+        # (std, mean, and principal components if ZCA whitening is applied).
+        datagen.fit(X_train)
+
+        # Fit the model on the batches generated by datagen.flow().
+        model.fit_generator(datagen.flow(X_train, y_train,
+                                         batch_size=batch_size),
+                            epochs=epochs,
+                            validation_data=(X_test, y_test),
+                            workers=4,
+                            steps_per_epoch=len(X_train) // batch_size,
+                            use_multiprocessing=True)
+    return model
+
+def save_model(model, save_dir, model_name):
+    # Save model and weights
+    if not os.path.isdir(save_dir):
+        os.makedirs(save_dir)
+    model_path = os.path.join(save_dir, model_name)
+    model.save(model_path)
+    print('Saved trained model at %s ' % model_path)
+
+def evaluate_model(model, X_test, y_test):
+    # Score trained model.
+    scores = model.evaluate(X_test, y_test, verbose=1)
+    print('Test loss:', scores[0])
+    print('Test accuracy:', scores[1])
 
 if __name__=='__main__':
     # transformations = [rgb2gray, sobel, canny, denoise_tv_chambolle, denoise_bilateral]
@@ -268,13 +426,74 @@ if __name__=='__main__':
     ip.resize(shape = (64, 64, 3), save=False)
     ip.grayscale()
     ip.save('test_1')
-    # ip.show('acura_tl_2014',6)
+    X, y = ip.prep_total_pipeline()
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+
+    # convert class vectors to binary class matrices (don't change)
+    Y_train = np_utils.to_categorical(y_train, num_classes) # cool
+    Y_test = np_utils.to_categorical(y_test, num_classes)   # cool * 2
+
+    # new doc 
+    # https://github.com/GalvanizeDataScience/lectures/blob/Denver/convolutional-neural-nets/frank-burkholder/keras_example_cifar10.py
+
+    X_train, X_test, y_train, y_test = load_and_featurize_data()
+    input_shape = X_train.shape[1:]
+
+    model = define_model(num_classes, input_shape)
+
+    model = compile_model(model, gd_optimizer)
+    
+    model = train_model(model, data_augmentation, batch_size, epochs, 
+                        X_train, X_test, y_train, y_test)
+
+    save_model(model, save_dir, model_name)
+
+    evaluate_model(model, X_test, y_test)
 
 
 
 
 
 
+
+
+    """
+    Wood Capstone Doc
+    """
+
+    # model = Sequential()
+    # model.add(Conv2D(nb_filters, (5, 5),
+    #                     padding='valid',
+    #                     input_shape=input_shape))
+    # model.add(Activation('relu')) # Activation specification necessary for Conv2D and Dense layers
+    # model.add(Conv2D(nb_filters, (3,3)))
+    # model.add(Activation('relu'))
+    # model.add(Conv2D(nb_filters, (2,2)))
+    # model.add(Activation('relu'))
+    # model.add(MaxPooling2D(pool_size=pool_size)) # decreases size, helps prevent overfitting
+    # model.add(Dropout(0.5)) # zeros out some fraction of inputs, helps prevent overfitting
+
+    # model.add(Flatten()) # necessary to flatten before going into conventional dense layer (keep layer)
+    # print('Model flattened out to ', model.output_shape)
+
+    # # now start a typical neural network
+    # model.add(Dense(128))
+    # model.add(Activation('tanh'))
+    # model.add(Dropout(0.15))
+    # model.add(Dense(num_classes)) # 10 final nodes (one for each class) (keep layer)
+    # model.add(Activation('softmax')) # keep softmax at end to pick between classes 0-9
+    # model.compile(loss='categorical_crossentropy',
+    #               optimizer='adam',
+    #               metrics=['accuracy'])
+
+    # # during fit process watch train and test error simultaneously
+    # model.fit(X_train, Y_train, batch_size=batch_size, epochs=num_epochs,
+    #           verbose=1, validation_data=(X_test, Y_test))
+
+    # score = model.evaluate(X_test, Y_test, verbose=0)
+    # print('Test score:', score[0])
+    # print('Test accuracy:', score[1]) # this is the one we care about
 
 
 
