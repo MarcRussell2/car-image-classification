@@ -17,7 +17,7 @@ from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, Dropout, Activation, Flatten
 from tensorflow.keras.layers import Convolution2D, MaxPooling2D
 from tensorflow.keras.layers.convolutional import Conv2D
-from tensorflow.keras.utils import np_utils
+from tensorflow.keras.utils import np_utils, to_categorical
 from tensorflow.keras import backend as K
 from sklearn.model_selection import train_test_split
 
