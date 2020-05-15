@@ -526,12 +526,12 @@ def plot_recalls(df):
     plt.tight_layout()
     plt.savefig('../img/rf-num-tree-10k-rec.png')
 
-def Create_Model(df_eval_trans, transformed_sub_dirs, shape=(64, 64, 3),resize=False):
+def Create_Model(df, transformed_sub_dirs, shape=(64, 64, 3),resize=False):
     for t_sub_dir in transformed_sub_dirs:
         ip = ImagePipeline(os.path.join('../data/',t_sub_dir))
         print('Reading Images...\n')
         ip.read()
-        if resize = True:
+        if resize == True:
             print('Resizing Images...')
             ip.resize(shape=shape, save=False)  # 64=.37, 32=.36
             print('Grayscaling Images...')
@@ -586,24 +586,24 @@ def Create_Model(df_eval_trans, transformed_sub_dirs, shape=(64, 64, 3),resize=F
         '''
         col_name = 'accuracy_'
         col_name += t_sub_dir
-        df_eval_trans[col_name] = rf_accuracy_lst
+        df[col_name] = rf_accuracy_lst
 
         col_name = 'precision_'  
         col_name += t_sub_dir
-        df_eval_trans[col_name] =  rf_precision_lst
+        df[col_name] =  rf_precision_lst
 
         col_name = 'recall_'
         col_name += t_sub_dir
-        df_eval_trans[col_name] = rf_recall_lst
+        df[col_name] = rf_recall_lst
 
-    df_eval_trans['num_trees'] = rf_num_trees_list
-    df_eval_trans.to_csv('../data/numerical_data/scores_gray_x.csv')
-    df_eval_trans.to_pickle('../data/numerical_data/scores_gray_x.pkl')
+    df['num_trees'] = rf_num_trees_list
+    df.to_csv('../data/numerical_data/scores_gray_x.csv')
+    df.to_pickle('../data/numerical_data/scores_gray_x.pkl')
 
 
 if __name__ == '__main__':
     print('\nReading...\n')
-    Create_Model(df_eval_trans, transformed_sub_dirs = ['gray_16', 'gray_32', 'gray_64'], (64,64,3))
+    Create_Model(df=df_eval_trans, transformed_sub_dirs = ['gray_16', 'gray_32', 'gray_64'], s=(64,64,3))
 
     df_eval_trans = pd.read_pickle('../data/numerical_data/scores_gray_x.pkl')
 
