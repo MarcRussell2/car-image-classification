@@ -118,28 +118,28 @@ Containing 9,170 classes consisting of 291,752 images, covering models manufactu
 Images were taken by different users, on different imaging devices, and cover multiple perspectives, ensuring a wide range of variations to account for various scenarios that could be encountered in a real-life scenario. The cars are not well aligned, and some images contain irrelevant backgrounds.
 
 <p align="center">
-  <img src="main/img/f150-full.jpg" width = 450 >
+  <img src="main/img/f150-full.jpg" width = 600 >
   <br>
-  Above: Originial Image (~600x500)
+  <em>Above:</em> Originial Image (~600x500)
 </p>
 <p align="center">
-  <img src="main/img/f150-g64.jpg" width = 150 >
-  <img src="main/img/f150-g32.jpg" width = 150 >
-  <img src="main/img/f150-g16.jpg" width = 150 >
+  <img src="main/img/f150-g64.jpg" width = 200 >
+  <img src="main/img/f150-g32.jpg" width = 200 >
+  <img src="main/img/f150-g16.jpg" width = 200 >
 </p>
 <p align="center">
-Left: 64x64 &nbsp; &nbsp;  &nbsp; | &nbsp;  &nbsp;  &nbsp; Middle: 32x32 &nbsp; &nbsp;  &nbsp; | &nbsp; &nbsp;  &nbsp; Right: 16x16</figcaption>
+<em>Left:</em> 64x64 &nbsp; &nbsp;   &nbsp;   &nbsp;   &nbsp;   &nbsp;   &nbsp;  &nbsp; &nbsp;  &nbsp; | &nbsp;   &nbsp;  &nbsp;  &nbsp;  &nbsp; &nbsp; &nbsp;  &nbsp; <em>Middle:</em> 32x32 &nbsp; &nbsp;  &nbsp;  &nbsp; &nbsp;  &nbsp;  &nbsp; &nbsp;  | &nbsp;  &nbsp;  &nbsp; &nbsp;   &nbsp;   &nbsp;  &nbsp;  &nbsp;   &nbsp;  <em>Right:</em> 16x16
 </p>
 <p align="center">
-  <img src="main/img/civic-g64.jpg" width = 150 >
-  <img src="main/img/civic-g32.jpg" width = 150 >
-  <img src="main/img/civic-g16.jpg" width = 150 >
+  <img src="main/img/civic-g64.jpg" width = 200 >
+  <img src="main/img/civic-g32.jpg" width = 200 >
+  <img src="main/img/civic-g16.jpg" width = 200 >
   <br>
-  Below: Originial Image (~600x500)
+  <em>Below:</em> Originial Image (~600x500)
 </p>
 
 <p align="center">
-  <img src="main/img/civic-full.jpg" width = 450 >
+  <img src="main/img/civic-full.jpg" width = 600 >
 </p>
 
 [Back to Top](#Table-of-Contents)
