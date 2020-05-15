@@ -158,9 +158,7 @@ Other transformations may prove useful when testing the model in the future. I'm
 <p align="center">
   <img src="main/img/forest.jpg" width = 550 ><sup>(3)</sup>
 </p>
-Before choosing a model I researched the 'giants' for whom which I will standing on their shoulders. Muhammad Asif Manzoor and Yasser Morgan published a great paper detailing how they used a random forest classificatier on a similar problem. They describe a <em>successful</em> model architecture used for classifying vehicle make and model for intelligent transportation systems.
-
-Out of boot (bag) score was very similar to, or better than, the test accuracy scores.
+Before choosing a model I researched the 'giants' for whom which I will standing on their shoulders. Muhammad Asif Manzoor and Yasser Morgan published a great paper detailing how they used a random forest classificatier on a similar problem.<sup>(4)</sup> They describe a <em>successful</em> model architecture used for classifying vehicle make and model for intelligent transportation systems.
 
 <p align="center">
   <img src="main/img/rf-num-tree-10k-acc.png" width = 650 >
@@ -173,6 +171,8 @@ Out of boot (bag) score was very similar to, or better than, the test accuracy s
 <p align="center">
   <img src="main/img/rf-num-tree-10k-rec.png" width = 650 >
 </p>
+
+Out of boot (bag) score was very similar to, or better than, the test accuracy scores.
 
 Next I'm looking forward to increase number of classes. With 14 classes, accuracy fell to around ~50%
 
@@ -198,7 +198,7 @@ I'm very excited to continue working on this project.
 
 <sup>(4)</sup>*M. A. Manzoor and Y. Morgan, "Vehicle make and model recognition using random forest classification for intelligent transportation systems," 2018 IEEE 8th Annual Computing and Communication Workshop and Conference (CCWC), Las Vegas, NV, 2018, pp. 148-154, doi: 10.1109/CCWC.2018.8301714.*
 
-<sup>5</sup>  "History of ANPR". ANPR Internatonal. Retrieved 18 December 2019, http://www.anpr-international.com/history-of-anpr/
+<sup>(5)</sup>  "History of ANPR". ANPR Internatonal. Retrieved 18 December 2019, http://www.anpr-international.com/history-of-anpr/
 
 [Back to Top](#Table-of-Contents)
 
