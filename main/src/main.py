@@ -440,73 +440,108 @@ if __name__ == '__main__':
 
     # transformations = [rgb2gray, sobel, canny, denoise_tv_chambolle, denoise_bilateral]
 
-    ip = ImagePipeline('../data/gray_32')
-    print('Reading Images...\n')
-    ip.read()
-    # print('Resizing Images...')
-    # ip.resize(shape=(16, 16, 3), save=False)  # 64=.37, 32=.36
-    # print('Grayscaling Images...')
-    # ip.grayscale()
-    # ip.save('gray_16')
-
-    print('Vectorizing...\n')
-    features, target = ip.vectorize()
-    print('splitting train/test \n')
-    X_train, X_test, y_train, y_test = train_test_split(features, target,
-                                                        test_size=0.2,
-                                                        random_state=42)
-    
-    # Random Forest
-    rf_accuracy_lst = []
-    rf_precision_lst = []
-    rf_recall_lst = []
-    rf_num_trees_list = list(np.arange(100,1000,20))
-    rf_num_trees_list.extend(list(np.arange(1000,5000,200)))
-
-    for num_trees in rf_num_trees_list:
-
-        print('RF',num_trees,'Classifying...\n')
-        rf = RandomForestClassifier(bootstrap=True,
-                                    ccp_alpha=0.0,
-                                    class_weight='balanced',  # default None
-                                    criterion='gini',
-                                    max_depth=None, #default None
-                                    max_features='auto',  # None = +-8% of % long rt
-                                    max_leaf_nodes=None,
-                                    max_samples=None,
-                                    min_impurity_decrease=0.0,
-                                    min_impurity_split=None,
-                                    min_samples_leaf=1,
-                                    min_samples_split=2,
-                                    min_weight_fraction_leaf=0.0,
-                                    n_estimators=num_trees,  # two class=100=0.70, 1000=0.75,10k=0.74
-                                    n_jobs=-2,  # use all CPUs but 1
-                                    oob_score=True, # Use out-of-bag samples
-                                    random_state=1,
-                                    verbose=0,
-                                    warm_start=False
-                                    )
-        print('RF Fitting...\n')
-        rf.fit(X_train, y_train)
-        print('Predicting...\n')
-        rf_preds = rf.predict(X_test)
-        print('Calculating Accuracy...\n')
-        rf_accuracy_lst.append(accuracy_score(y_test, rf_preds))
-        rf_precision_lst.append(precision_score(y_test, rf_preds))
-        rf_recall_lst.append(recall_score(y_test, rf_preds))
-
-    # rf_num_trees_list = [100, 110, 120, 130, 140, 150, 160, 170, 180, 190, 200, 210, 220, 230, 240, 250, 260, 270, 280, 290, 300, 310, 320, 330, 340, 350, 360, 370, 380, 390, 400, 410, 420, 430, 440, 450, 460, 470, 480, 490, 500, 510, 520, 530, 540, 550, 560, 570, 580, 590, 600, 610, 620, 630, 640, 650, 660, 670, 680, 690, 700, 710, 720, 730, 740, 750, 760, 770, 780, 790, 800, 810, 820, 830, 840, 850, 860, 870, 880, 890, 900, 910, 920, 930, 940, 950, 960, 970, 980, 990, 1000, 1200, 1400, 1600, 1800, 2000, 2200, 2400, 2600, 2800, 3000, 3200, 3400, 3600, 3800, 4000, 4200, 4400, 4600, 4800]
-    # rf_accuracy_lst = [0.6838709677419355, 0.6903225806451613, 0.6580645161290323, 0.6774193548387096, 0.6774193548387096, 0.6903225806451613, 0.6967741935483871, 0.7096774193548387, 0.7096774193548387, 0.6967741935483871, 0.7161290322580646, 0.7032258064516129, 0.7032258064516129, 0.7225806451612903, 0.7096774193548387, 0.7032258064516129, 0.7161290322580646, 0.7096774193548387, 0.7096774193548387, 0.7161290322580646, 0.7032258064516129, 0.6967741935483871, 0.6903225806451613, 0.6903225806451613, 0.6903225806451613, 0.7096774193548387, 0.7096774193548387, 0.6903225806451613, 0.6903225806451613, 0.6967741935483871, 0.7032258064516129, 0.7032258064516129, 0.7032258064516129, 0.7032258064516129, 0.7032258064516129, 0.7032258064516129, 0.7096774193548387, 0.7096774193548387, 0.6967741935483871, 0.6967741935483871, 0.6967741935483871, 0.6967741935483871, 0.6967741935483871, 0.6903225806451613, 0.6967741935483871, 0.6903225806451613, 0.7032258064516129, 0.7096774193548387, 0.7032258064516129, 0.7032258064516129, 0.7032258064516129, 0.7032258064516129, 0.7032258064516129, 0.7032258064516129, 0.7032258064516129, 0.6967741935483871, 0.7032258064516129, 0.7032258064516129, 0.7032258064516129, 0.7032258064516129, 0.6967741935483871, 0.6967741935483871, 0.6967741935483871, 0.6967741935483871, 0.6967741935483871, 0.6967741935483871, 0.6967741935483871, 0.6967741935483871, 0.6967741935483871, 0.6967741935483871, 0.6967741935483871, 0.6967741935483871, 0.6967741935483871, 0.7032258064516129, 0.7032258064516129, 0.7032258064516129, 0.7032258064516129, 0.6967741935483871, 0.7096774193548387, 0.7096774193548387, 0.7032258064516129, 0.7096774193548387, 0.7032258064516129, 0.7032258064516129, 0.7032258064516129, 0.7096774193548387, 0.7032258064516129, 0.7096774193548387, 0.7032258064516129, 0.7032258064516129, 0.7096774193548387, 0.7161290322580646, 0.7161290322580646, 0.7225806451612903, 0.7161290322580646, 0.7225806451612903, 0.7290322580645161, 0.7096774193548387, 0.7032258064516129, 0.6967741935483871, 0.7032258064516129, 0.6967741935483871, 0.6967741935483871, 0.7032258064516129, 0.7032258064516129, 0.7032258064516129, 0.7032258064516129, 0.7032258064516129, 0.7032258064516129, 0.7096774193548387]
-    # rf_precision_lst = [0.6990291262135923, 0.7019230769230769, 0.6796116504854369, 0.6923076923076923, 0.696078431372549, 0.7019230769230769, 0.7047619047619048, 0.7184466019417476, 0.7184466019417476, 0.7087378640776699, 0.7169811320754716, 0.7075471698113207, 0.7075471698113207, 0.7238095238095238, 0.7142857142857143, 0.7075471698113207, 0.7211538461538461, 0.7142857142857143, 0.7142857142857143, 0.7169811320754716, 0.7115384615384616, 0.7047619047619048, 0.7019230769230769, 0.6981132075471698, 0.6981132075471698, 0.7102803738317757, 0.7102803738317757, 0.6944444444444444, 0.7019230769230769, 0.7047619047619048, 0.7115384615384616, 0.7115384615384616, 0.7115384615384616, 0.7075471698113207, 0.7075471698113207, 0.7075471698113207, 0.7142857142857143, 0.7142857142857143, 0.7009345794392523, 0.6972477064220184, 0.7009345794392523, 0.7009345794392523, 0.7009345794392523, 0.6944444444444444, 0.7009345794392523, 0.6909090909090909, 0.6964285714285714, 0.7027027027027027, 0.6964285714285714, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.6936936936936937, 0.7, 0.7, 0.7, 0.7, 0.6972477064220184, 0.6972477064220184, 0.6972477064220184, 0.6972477064220184, 0.6972477064220184, 0.6972477064220184, 0.6972477064220184, 0.6972477064220184, 0.6972477064220184, 0.6972477064220184, 0.6972477064220184, 0.6972477064220184, 0.6972477064220184, 0.7, 0.7, 0.7, 0.7, 0.6972477064220184, 0.7027027027027027, 0.7027027027027027, 0.7, 0.7027027027027027, 0.7, 0.7, 0.7, 0.7027027027027027, 0.7, 0.7027027027027027, 0.7, 0.7, 0.7027027027027027, 0.7053571428571429, 0.7090909090909091, 0.719626168224299, 0.7129629629629629, 0.719626168224299, 0.7222222222222222, 0.7064220183486238, 0.7, 0.6936936936936937, 0.7, 0.6972477064220184, 0.6972477064220184, 0.7037037037037037, 0.7037037037037037, 0.7037037037037037, 0.7037037037037037, 0.7037037037037037, 0.7037037037037037, 0.7102803738317757]
-    # rf_recall_lst = [0.8, 0.8111111111111111, 0.7777777777777778, 0.8, 0.7888888888888889, 0.8111111111111111, 0.8222222222222222, 0.8222222222222222, 0.8222222222222222, 0.8111111111111111, 0.8444444444444444, 0.8333333333333334, 0.8333333333333334, 0.8444444444444444, 0.8333333333333334, 0.8333333333333334, 0.8333333333333334, 0.8333333333333334, 0.8333333333333334, 0.8444444444444444, 0.8222222222222222, 0.8222222222222222, 0.8111111111111111, 0.8222222222222222, 0.8222222222222222, 0.8444444444444444, 0.8444444444444444, 0.8333333333333334, 0.8111111111111111, 0.8222222222222222, 0.8222222222222222, 0.8222222222222222, 0.8222222222222222, 0.8333333333333334, 0.8333333333333334, 0.8333333333333334, 0.8333333333333334, 0.8333333333333334, 0.8333333333333334, 0.8444444444444444, 0.8333333333333334, 0.8333333333333334, 0.8333333333333334, 0.8333333333333334, 0.8333333333333334, 0.8444444444444444, 0.8666666666666667, 0.8666666666666667, 0.8666666666666667, 0.8555555555555555, 0.8555555555555555, 0.8555555555555555, 0.8555555555555555, 0.8555555555555555, 0.8555555555555555, 0.8555555555555555, 0.8555555555555555, 0.8555555555555555, 0.8555555555555555, 0.8555555555555555, 0.8444444444444444, 0.8444444444444444, 0.8444444444444444, 0.8444444444444444, 0.8444444444444444, 0.8444444444444444, 0.8444444444444444, 0.8444444444444444, 0.8444444444444444, 0.8444444444444444, 0.8444444444444444, 0.8444444444444444, 0.8444444444444444, 0.8555555555555555, 0.8555555555555555, 0.8555555555555555, 0.8555555555555555, 0.8444444444444444, 0.8666666666666667, 0.8666666666666667, 0.8555555555555555, 0.8666666666666667, 0.8555555555555555, 0.8555555555555555, 0.8555555555555555, 0.8666666666666667, 0.8555555555555555, 0.8666666666666667, 0.8555555555555555, 0.8555555555555555, 0.8666666666666667, 0.8777777777777778, 0.8666666666666667, 0.8555555555555555, 0.8555555555555555, 0.8555555555555555, 0.8666666666666667, 0.8555555555555555, 0.8555555555555555, 0.8555555555555555, 0.8555555555555555, 0.8444444444444444, 0.8444444444444444, 0.8444444444444444, 0.8444444444444444, 0.8444444444444444, 0.8444444444444444, 0.8444444444444444, 0.8444444444444444, 0.8444444444444444]
-
     fig = plt.figure()
     ax = fig.add_subplot(1, 1, 1)
-    ax.plot(rf_num_trees_list, rf_accuracy_lst, label='Accuracy')
-    ax.plot(rf_num_trees_list, rf_precision_lst, label='Precision')
-    ax.plot(rf_num_trees_list, rf_recall_lst, label='Recall')
-    ax.legend()
-    plt.savefig('../img/rf-num-tree-10k-g32.png')
+
+    transformed_sub_dirs = ['gray_16', 'gray_32', 'gray_64']
+    for t_sub_dir in transformed_sub_dirs:
+        ip = ImagePipeline(os.path.join('../data/',t_sub_dir))
+        print('Reading Images...\n')
+        ip.read()
+        # print('Resizing Images...')
+        # ip.resize(shape=(64, 64, 3), save=False)  # 64=.37, 32=.36
+        # print('Grayscaling Images...')
+        # ip.grayscale()
+        # ip.save('gray_64')
+
+        print('Vectorizing...\n')
+        features, target = ip.vectorize()
+        print('splitting train/test \n')
+        X_train, X_test, y_train, y_test = train_test_split(features, target,
+                                                            test_size=0.2,
+                                                            random_state=42)
+        
+        # Random Forest
+
+
+        rf_accuracy_lst = []
+        rf_precision_lst = []
+        rf_recall_lst = []
+        rf_num_trees_list = list(np.arange(100,1000,20))
+        rf_num_trees_list.extend(list(np.arange(1000,5000,200)))
+
+        for num_trees in rf_num_trees_list:
+
+            print('RF',num_trees,'Classifying...', t_sub_dir,'\n')
+            rf = RandomForestClassifier(bootstrap=True,
+                                        ccp_alpha=0.0,
+                                        class_weight='balanced',  # default None
+                                        criterion='gini',
+                                        max_depth=None, #default None
+                                        max_features='auto',  # None = +-8% of % long rt
+                                        max_leaf_nodes=None,
+                                        max_samples=None,
+                                        min_impurity_decrease=0.0,
+                                        min_impurity_split=None,
+                                        min_samples_leaf=1,
+                                        min_samples_split=2,
+                                        min_weight_fraction_leaf=0.0,
+                                        n_estimators=num_trees,  # two class=100=0.70, 1000=0.75,10k=0.74
+                                        n_jobs=-2,  # use all CPUs but 1
+                                        oob_score=True, # Use out-of-bag samples
+                                        random_state=1,
+                                        verbose=0,
+                                        warm_start=False
+                                        )
+            print('RF Fitting...\n')
+            rf.fit(X_train, y_train)
+            print('Predicting...\n')
+            rf_preds = rf.predict(X_test)
+            print('Calculating Accuracy...\n')
+            rf_accuracy_lst.append(accuracy_score(y_test, rf_preds))
+            rf_precision_lst.append(precision_score(y_test, rf_preds))
+            rf_recall_lst.append(recall_score(y_test, rf_preds))
+
+        '''
+        making the df to store the plotted values
+        '''
+        df_eval_trans = pd.DataFrame()
+
+        col_name = 'accuracy_'
+        col_name += t_sub_dir
+        df_eval_trans.col_name = rf_accuracy_lst
+
+        col_name = 'precision_'  
+        col_name += t_sub_dir
+        df_eval_trans.col_name =  rf_precision_lst
+
+        col_name = 'recall_'
+        col_name += t_sub_dir
+        df_eval_trans.col_name = rf_recall_lst
+
+        print(df_eval_trans)
+
+        # # plot each evaluation metric for this subdirectory index
+        # sub_dir_label_lst = t_sub_dir.split("_")
+        # new_label = ''
+        # new_label += sub_dir_label_lst[1]+'x'+sub_dir_label_lst[1]+' '+sub_dir_label_lst[0]+ ' - Accuracy'
+        # ax.plot(rf_num_trees_list, rf_accuracy_lst, label=new_label)
+        # new_label = ''
+        # new_label += sub_dir_label_lst[1]+'x'+sub_dir_label_lst[1]+' '+sub_dir_label_lst[0]+ ' - Precision'
+        # ax.plot(rf_num_trees_list, rf_precision_lst, label=new_label)
+        # new_label = ''
+        # new_label += sub_dir_label_lst[1]+'x'+sub_dir_label_lst[1]+' '+sub_dir_label_lst[0]+ ' - Recall'
+        # ax.plot(rf_num_trees_list, rf_recall_lst, label=new_label)
+
+    # ax.legend()
+    # plt.savefig('../img/rf-num-tree-10k-all.png')
+
+    pd.to_pickle('../data/numerical_data/scores_gray_x.pkl')
+    pd.to_csv('../data/numerical_data/scores_gray_x.csv')
+
+
+
+
 
 
     # print('\n \n start trees list:', rf_num_trees_list)
@@ -515,13 +550,13 @@ if __name__ == '__main__':
     # print('\n \n start rec list:', rf_recall_lst)
     
         
-        # rf_accuracy = accuracy_score(y_test, rf_preds)
-        # rf_precision = precision_score(y_test, rf_preds)
-        # rf_recall = recall_score(y_test, rf_preds)
-        # print('\n \n RF Accuracy is: ', rf_accuracy, '\n')
-        # print('\n Out-of-"Boot" Score is: ', rf.oob_score_, '\n')
-        # print('\n RF Precision is: ', rf_precision, '\n')
-        # print('\n RF Recall is: ', rf_recall, '\n \n')
+    #     rf_accuracy = accuracy_score(y_test, rf_preds)
+    #     rf_precision = precision_score(y_test, rf_preds)
+    #     rf_recall = recall_score(y_test, rf_preds)
+    #     print('\n \n RF Accuracy is: ', rf_accuracy, '\n')
+    #     print('\n Out-of-"Boot" Score is: ', rf.oob_score_, '\n')
+    #     print('\n RF Precision is: ', rf_precision, '\n')
+    #     print('\n RF Recall is: ', rf_recall, '\n \n')
 
     # print('\n Cross Validation Score 5 Folds:'
     # print('\n Avg Accuracy:',
@@ -541,94 +576,3 @@ if __name__ == '__main__':
     # ip.show(sub_dir_idx=2, img_idx=2)
     # ip.show(sub_dir_idx=2, img_idx=1)
 
-    # X, y = ip.prep_X_y()
-    # X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-
-    # # convert class vectors to binary class matrices (don't change)
-    # Y_train = np_utils.to_categorical(y_train, num_classes) # cool
-    # Y_test = np_utils.to_categorical(y_test, num_classes)   # cool * 2
-
-    # # new doc
-    # # https://github.com/GalvanizeDataScience/lectures/blob/Denver/convolutional-neural-nets/frank-burkholder/keras_example_cifar10.py
-
-    # X_train, X_test, y_train, y_test = load_and_featurize_data()
-    # input_shape = X_train.shape[1:]
-
-    # model = define_model(num_classes, input_shape)
-
-    # model = compile_model(model, gd_optimizer)
-
-    # model = train_model(model, data_augmentation, batch_size, epochs,
-    #                     X_train, X_test, y_train, y_test)
-
-    # save_model(model, save_dir, model_name)
-
-    # evaluate_model(model, X_test, y_test)
-
-    """
-    Wood Capstone Doc
-    """
-
-    # model = Sequential()
-    # model.add(Conv2D(nb_filters, (5, 5),
-    #                     padding='valid',
-    #                     input_shape=input_shape))
-    # model.add(Activation('relu')) # Activation specification necessary for Conv2D and Dense layers
-    # model.add(Conv2D(nb_filters, (3,3)))
-    # model.add(Activation('relu'))
-    # model.add(Conv2D(nb_filters, (2,2)))
-    # model.add(Activation('relu'))
-    # model.add(MaxPooling2D(pool_size=pool_size)) # decreases size, helps prevent overfitting
-    # model.add(Dropout(0.5)) # zeros out some fraction of inputs, helps prevent overfitting
-
-    # model.add(Flatten()) # necessary to flatten before going into conventional dense layer (keep layer)
-    # print('Model flattened out to ', model.output_shape)
-
-    # # now start a typical neural network
-    # model.add(Dense(128))
-    # model.add(Activation('tanh'))
-    # model.add(Dropout(0.15))
-    # model.add(Dense(num_classes)) # 10 final nodes (one for each class) (keep layer)
-    # model.add(Activation('softmax')) # keep softmax at end to pick between classes 0-9
-    # model.compile(loss='categorical_crossentropy',
-    #               optimizer='adam',
-    #               metrics=['accuracy'])
-
-    # # during fit process watch train and test error simultaneously
-    # model.fit(X_train, Y_train, batch_size=batch_size, epochs=num_epochs,
-    #           verbose=1, validation_data=(X_test, Y_test))
-
-    # score = model.evaluate(X_test, Y_test, verbose=0)
-    # print('Test score:', score[0])
-    # print('Test accuracy:', score[1]) # this is the one we care about
-
-    """
-    BUILDING THE (classless) IMAGE CLEANING PIPELINE
-    """
-    # img_folder = '../data/subset'
-
-    # # read in an image of interest
-    # path_string_list = os.listdir(img_folder)
-    # path_string_list.sort()
-
-    # # split path_string ('acura_TL_1984') on '_'
-    # # path_list == list of lists (llist)
-    # # eg. [[acura, TL, 1984],[acura, TL, 1985], [acura, GE, 1999]]
-    # path_llist = [re.split("_", path_string) for path_string in path_string_list]
-
-    # parent_dir = "../data/subset/"
-    # img_name_llist = [os.listdir(parent_dir + path) for path in path_string_list]
-
-    # img_path_name_dict = {}
-    # for i, path in enumerate(path_string_list):
-    #     if path not in img_path_name_dict:
-    #         img_path_name_dict[path] = img_name_llist[i]
-
-    # img_dict = {path: [] for path in path_string_list}
-    # for path, fname_list in img_path_name_dict.items():
-    #     for fname in fname_list:
-    #         if path in img_dict:
-    #             img_dict[path].append(io.imread(os.path.join(parent_dir, path, fname)))
-
-    # io.imshow(img_dict['acura_cl_1997'][1])
-    # plt.show()
