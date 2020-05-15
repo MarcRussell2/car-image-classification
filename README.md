@@ -39,7 +39,7 @@
 Law enforcement are commonly tasked with confirming that license plates match
 the vehicle that they are attached to. 
 
-This job is greatly assisted by automatic license plate reader/recognition technology (ALPR) which relays the licence plate number to the officer. After the ALPR sends the plate number to the officer’s mobile computer, there is one tedious task remaining - confirming that the vehicle matches the description linked to the plate number. 
+This job is greatly assisted by automatic license plate reader/recognition (ALPR) technology which relays the licence plate number to the officer. After the ALPR sends the plate number to the officer’s mobile computer, there is one tedious task remaining - confirming that the vehicle matches the description linked to the plate number. 
 
 <p align="center">
   <img src="main/img/mobile-alpr.png" width = 600 ><sup>(2)</sup>
@@ -72,26 +72,26 @@ Law enforcement are often searching for vehicles that have been reported stolen,
     j. ALPR equipment (e.g., age and/or ability of the ALPR camera)
     k. ALPR implementation (e.g., camera angle) 
 <p align="center">
-  <img src="main/img/mobile-alpr2.png" width = 650 >
+  <img src="main/img/mobile-alpr2.png" width = 650 ><sup>(2)</sup>
 </p> 
 There are several types of ALPR systems that range in effectiveness. For example, the capture rate of mobile ALPR systems are often ~10% worse than stationary systems.
 
 
 <p align="center">
-  <img src="main/img/fixed-alpr.png" width = 650 >
+  <img src="main/img/fixed-alpr.png" width = 650 ><sup>(2)</sup>
 </p> 
 
 <p align="center">
-  <img src="main/img/alpr-gui.png" width = 350 >
+  <img src="main/img/alpr-gui.png" width = 350 ><sup>(2)</sup>
 </p>
 
 [Back to Top](#Table-of-Contents)
 
 ## Goals
 ### Minimum Viable Product
-Classify car images with and accuracy comprable to that of ALPR's overall accuracy while minimizing false negatives.
+Classify car images with an accuracy comprable to that of ALPR's overall accuracy while minimizing false negatives.
 <p align="center">
-  <img src="main/img/alpr-capture-rate.png" width = 550 >
+  <img src="main/img/alpr-capture-rate.png" width = 550 ><sup>(2)</sup>
 </p>
 
 ### Near-Future Goals (MVP+)
@@ -111,7 +111,7 @@ Improve the model by using user-submitted data.
 
 ## The Data
 
-The dataset comes from vmmrdb.cecsresearch.org and consists of vehicle make/model/year labels assigned to images scraped from sites like Craigslist and Ebay. 
+The dataset comes from vmmrdb.cecsresearch.org and consists of vehicle make/model/year labels assigned to images scraped from sites like Craigslist and eBay. 
 
 Containing 9,170 classes consisting of 291,752 images, covering models manufactured between 1950 to 2016 it is far from complete. 
 
@@ -150,7 +150,7 @@ Images were stored in folders according to the make, model, (sometimes sub-model
 
 I read in a subset of the image files being sure to choose two classes that were visually different and that had many (hundreds) of images. The subset of images were scaled down (distorting some) and converted to grayscale.
 
-Other transformations may prove useful when testing the model in the future. I'm excited to try applying zooms, crops, rotations, mirroring, bluring, sobel, canny, denoising, etc. This will greatly increase the size of the dataset.
+Other transformations may prove useful when testing the model in the future. I'm excited to try applying zooms, crops, rotations, mirroring, blurring, sobel, canny, denoising, etc. This will greatly increase the size of the dataset.
 
 [Back to Top](#Table-of-Contents)
 
