@@ -432,112 +432,232 @@ def evaluate_model(model, X_test, y_test):
     print('Test accuracy:', scores[1])
 
 
+def plot_accuracies(df):
+    fig = plt.figure(figsize=(8,4), dpi=200)
+    ax = fig.add_subplot(1, 1, 1)
+
+
+    ax.plot(df.num_trees, 
+            (100*df.accuracy_gray_16), 
+            label = '16x16',
+            color = '#8feaff'
+            )
+
+    ax.plot(df.num_trees, 
+            (100*df.accuracy_gray_32), 
+            label = '32x32',
+            color = '#04add4'
+            )
+
+    ax.plot(df.num_trees, 
+            (100*df.accuracy_gray_64), 
+            label = '64x64',
+            color = '#00748f'
+            )
+
+    hline_height = 100 * df[['accuracy_gray_16', 
+                                    'accuracy_gray_32', 
+                                    'accuracy_gray_64']].max().max()
+    plt.axhline(y=hline_height, linewidth=1,linestyle='--', color='k', alpha=0.3)
+    plt.axvline(x=860, linewidth=3,linestyle='--', color='k', alpha=0.15)
+
+    plt.title('Accuracy vs Number of Trees Across Three Image Scales')
+    plt.xlabel('Number of Trees')
+    plt.ylabel('Accuracy                \nPercentage                 ', rotation='horizontal')
+    plt.legend(title=' Image\nResolution')
+    plt.tight_layout()
+    plt.savefig('../img/rf-num-tree-10k-acc.png')
+
+def plot_precisions(df):
+    fig = plt.figure(figsize=(8,4), dpi=200)
+    ax = fig.add_subplot(1, 1, 1)
+
+
+    ax.plot(df.num_trees, 
+            (100*df.precision_gray_16), 
+            label = '16x16',
+            color = '#ffb65c'
+            )
+
+    ax.plot(df.num_trees, 
+            (100*df.precision_gray_32), 
+            label = '32x32',
+            color = '#f08400'
+            )
+
+    ax.plot(df.num_trees, 
+            (100*df.precision_gray_64), 
+            label = '64x64',
+            color = '#824800'
+            )
+
+    hline_height = 100 * df[['precision_gray_16', 
+                                    'precision_gray_32', 
+                                    'precision_gray_64']].max().max()
+    plt.axhline(y=hline_height, linewidth=1,linestyle='--', color='k', alpha=0.3)
+    plt.axvline(x=850, linewidth=2.5,linestyle='--', color='k', alpha=0.15)
+
+    plt.title('Precision vs Number of Trees Across Three Image Scales')
+    plt.xlabel('Number of Trees')
+    plt.ylabel('Precision                \nPercentage                 ', rotation='horizontal')
+    plt.legend(title=' Image\nResolution')
+    plt.tight_layout()
+    plt.savefig('../img/rf-num-tree-10k-prec.png')
+
+
+def plot_recalls(df):
+    fig = plt.figure(figsize=(8,4), dpi=200)
+    ax = fig.add_subplot(1, 1, 1)
+
+
+    ax.plot(df.num_trees, 
+            (100*df.recall_gray_16), 
+            label = '16x16',
+            color = '#ffb65c'
+            )
+
+    ax.plot(df.num_trees, 
+            (100*df.recall_gray_32), 
+            label = '32x32',
+            color = '#f08400'
+            )
+
+    ax.plot(df.num_trees, 
+            (100*df.recall_gray_64), 
+            label = '64x64',
+            color = '#824800'
+            )
+
+    hline_height = 100 * df[['recall_gray_16', 
+                                    'recall_gray_32', 
+                                    'recall_gray_64']].max().max()
+    plt.axhline(y=hline_height, linewidth=1,linestyle='--', color='k', alpha=0.3)
+
+    plt.axvline(x=888, linewidth=4.5,linestyle='--', color='k', alpha=0.15)
+
+    plt.title('Recall vs Number of Trees Across Three Image Scales')
+    plt.xlabel('Number of Trees')
+    plt.ylabel('Recall                  \nPercentage                 ', rotation='horizontal')
+    plt.legend(title=' Image\nResolution')
+    plt.tight_layout()
+    plt.savefig('../img/rf-num-tree-10k-rec.png')
+
 if __name__ == '__main__':
 
     plt.rcParams.update({'font.size': 22})  # for Frank
     plt.style.use('ggplot')  # for not blue
     np.random.seed(42)  # for reproducibility
 
+    print('\nReading...\n')
+    # df_eval_trans = pd.DataFrame()
+    df_eval_trans = pd.read_pickle('../data/numerical_data/scores_gray_x.pkl')
+
+    num_trees_list = list(np.arange(100,1000,20))
+    num_trees_list.extend(list(np.arange(1000,5000,200)))
+    df_eval_trans['num_trees'] = num_trees_list
+
+    print('plotting...\n\n')
+    plot_accuracies(df_eval_trans)
+    plot_precisions(df_eval_trans)
+    plot_recalls(df_eval_trans)
+
     # transformations = [rgb2gray, sobel, canny, denoise_tv_chambolle, denoise_bilateral]
 
-    fig = plt.figure()
-    ax = fig.add_subplot(1, 1, 1)
+    # fig = plt.figure()
+    # ax = fig.add_subplot(1, 1, 1)
 
-    transformed_sub_dirs = ['gray_16', 'gray_32', 'gray_64']
-    for t_sub_dir in transformed_sub_dirs:
-        ip = ImagePipeline(os.path.join('../data/',t_sub_dir))
-        print('Reading Images...\n')
-        ip.read()
-        # print('Resizing Images...')
-        # ip.resize(shape=(64, 64, 3), save=False)  # 64=.37, 32=.36
-        # print('Grayscaling Images...')
-        # ip.grayscale()
-        # ip.save('gray_64')
+    # transformed_sub_dirs = ['gray_16', 'gray_32', 'gray_64']
+    # for t_sub_dir in transformed_sub_dirs:
+    #     ip = ImagePipeline(os.path.join('../data/',t_sub_dir))
+    #     print('Reading Images...\n')
+    #     ip.read()
+    #     # print('Resizing Images...')
+    #     # ip.resize(shape=(64, 64, 3), save=False)  # 64=.37, 32=.36
+    #     # print('Grayscaling Images...')
+    #     # ip.grayscale()
+    #     # ip.save('gray_64')
 
-        print('Vectorizing...\n')
-        features, target = ip.vectorize()
-        print('splitting train/test \n')
-        X_train, X_test, y_train, y_test = train_test_split(features, target,
-                                                            test_size=0.2,
-                                                            random_state=42)
+    #     print('Vectorizing...\n')
+    #     features, target = ip.vectorize()
+    #     print('splitting train/test \n')
+    #     X_train, X_test, y_train, y_test = train_test_split(features, target,
+    #                                                         test_size=0.2,
+    #                                                         random_state=42)
         
-        # Random Forest
+    #     # Random Forest
 
 
-        rf_accuracy_lst = []
-        rf_precision_lst = []
-        rf_recall_lst = []
-        rf_num_trees_list = list(np.arange(100,1000,20))
-        rf_num_trees_list.extend(list(np.arange(1000,5000,200)))
+    #     rf_accuracy_lst = []
+    #     rf_precision_lst = []
+    #     rf_recall_lst = []
+    #     rf_num_trees_list = list(np.arange(100,1000,20))
+    #     rf_num_trees_list.extend(list(np.arange(1000,5000,200)))
 
-        for num_trees in rf_num_trees_list:
+    #     for num_trees in rf_num_trees_list:
 
-            print('RF',num_trees,'Classifying...', t_sub_dir,'\n')
-            rf = RandomForestClassifier(bootstrap=True,
-                                        ccp_alpha=0.0,
-                                        class_weight='balanced',  # default None
-                                        criterion='gini',
-                                        max_depth=None, #default None
-                                        max_features='auto',  # None = +-8% of % long rt
-                                        max_leaf_nodes=None,
-                                        max_samples=None,
-                                        min_impurity_decrease=0.0,
-                                        min_impurity_split=None,
-                                        min_samples_leaf=1,
-                                        min_samples_split=2,
-                                        min_weight_fraction_leaf=0.0,
-                                        n_estimators=num_trees,  # two class=100=0.70, 1000=0.75,10k=0.74
-                                        n_jobs=-2,  # use all CPUs but 1
-                                        oob_score=True, # Use out-of-bag samples
-                                        random_state=1,
-                                        verbose=0,
-                                        warm_start=False
-                                        )
-            print('RF Fitting...\n')
-            rf.fit(X_train, y_train)
-            print('Predicting...\n')
-            rf_preds = rf.predict(X_test)
-            print('Calculating Accuracy...\n')
-            rf_accuracy_lst.append(accuracy_score(y_test, rf_preds))
-            rf_precision_lst.append(precision_score(y_test, rf_preds))
-            rf_recall_lst.append(recall_score(y_test, rf_preds))
+    #         print('RF',num_trees,'Classifying...', t_sub_dir,'\n')
+    #         rf = RandomForestClassifier(bootstrap=True,
+    #                                     ccp_alpha=0.0,
+    #                                     class_weight='balanced',  # default None
+    #                                     criterion='gini',
+    #                                     max_depth=None, #default None
+    #                                     max_features='auto',  # None = +-8% of % long rt
+    #                                     max_leaf_nodes=None,
+    #                                     max_samples=None,
+    #                                     min_impurity_decrease=0.0,
+    #                                     min_impurity_split=None,
+    #                                     min_samples_leaf=1,
+    #                                     min_samples_split=2,
+    #                                     min_weight_fraction_leaf=0.0,
+    #                                     n_estimators=num_trees,  # two class=100=0.70, 1000=0.75,10k=0.74
+    #                                     n_jobs=-2,  # use all CPUs but 1
+    #                                     oob_score=True, # Use out-of-bag samples
+    #                                     random_state=1,
+    #                                     verbose=0,
+    #                                     warm_start=False
+    #                                     )
+    #         print('RF Fitting...\n')
+    #         rf.fit(X_train, y_train)
+    #         print('Predicting...\n')
+    #         rf_preds = rf.predict(X_test)
+    #         print('Calculating Accuracy...\n')
+    #         rf_accuracy_lst.append(accuracy_score(y_test, rf_preds))
+    #         rf_precision_lst.append(precision_score(y_test, rf_preds))
+    #         rf_recall_lst.append(recall_score(y_test, rf_preds))
 
-        '''
-        making the df to store the plotted values
-        '''
-        df_eval_trans = pd.DataFrame()
+    #     '''
+    #     making the df to store the plotted values
+    #     '''
+    #     col_name = 'accuracy_'
+    #     col_name += t_sub_dir
+    #     df_eval_trans[col_name] = rf_accuracy_lst
 
-        col_name = 'accuracy_'
-        col_name += t_sub_dir
-        df_eval_trans.col_name = rf_accuracy_lst
+    #     col_name = 'precision_'  
+    #     col_name += t_sub_dir
+    #     df_eval_trans[col_name] =  rf_precision_lst
 
-        col_name = 'precision_'  
-        col_name += t_sub_dir
-        df_eval_trans.col_name =  rf_precision_lst
+    #     col_name = 'recall_'
+    #     col_name += t_sub_dir
+    #     df_eval_trans[col_name] = rf_recall_lst
 
-        col_name = 'recall_'
-        col_name += t_sub_dir
-        df_eval_trans.col_name = rf_recall_lst
+    #     # # plot each evaluation metric for this subdirectory index
+    #     # sub_dir_label_lst = t_sub_dir.split("_")
+    #     # new_label = ''
+    #     # new_label += sub_dir_label_lst[1]+'x'+sub_dir_label_lst[1]+' '+sub_dir_label_lst[0]+ ' - Accuracy'
+    #     # ax.plot(rf_num_trees_list, rf_accuracy_lst, label=new_label)
+    #     # new_label = ''
+    #     # new_label += sub_dir_label_lst[1]+'x'+sub_dir_label_lst[1]+' '+sub_dir_label_lst[0]+ ' - Precision'
+    #     # ax.plot(rf_num_trees_list, rf_precision_lst, label=new_label)
+    #     # new_label = ''
+    #     # new_label += sub_dir_label_lst[1]+'x'+sub_dir_label_lst[1]+' '+sub_dir_label_lst[0]+ ' - Recall'
+    #     # ax.plot(rf_num_trees_list, rf_recall_lst, label=new_label)
 
-        print(df_eval_trans)
+    # # ax.legend()
+    # # plt.savefig('../img/rf-num-tree-10k-all.png')
 
-        # # plot each evaluation metric for this subdirectory index
-        # sub_dir_label_lst = t_sub_dir.split("_")
-        # new_label = ''
-        # new_label += sub_dir_label_lst[1]+'x'+sub_dir_label_lst[1]+' '+sub_dir_label_lst[0]+ ' - Accuracy'
-        # ax.plot(rf_num_trees_list, rf_accuracy_lst, label=new_label)
-        # new_label = ''
-        # new_label += sub_dir_label_lst[1]+'x'+sub_dir_label_lst[1]+' '+sub_dir_label_lst[0]+ ' - Precision'
-        # ax.plot(rf_num_trees_list, rf_precision_lst, label=new_label)
-        # new_label = ''
-        # new_label += sub_dir_label_lst[1]+'x'+sub_dir_label_lst[1]+' '+sub_dir_label_lst[0]+ ' - Recall'
-        # ax.plot(rf_num_trees_list, rf_recall_lst, label=new_label)
+    # df_eval_trans.to_csv('../data/numerical_data/scores_gray_x.csv')
+    # df_eval_trans.to_pickle('../data/numerical_data/scores_gray_x.pkl')
 
-    # ax.legend()
-    # plt.savefig('../img/rf-num-tree-10k-all.png')
-
-    pd.to_pickle('../data/numerical_data/scores_gray_x.pkl')
-    pd.to_csv('../data/numerical_data/scores_gray_x.csv')
 
 
 

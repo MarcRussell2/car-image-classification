@@ -1,29 +1,39 @@
 <p align="center">
-  <img src="main/img/pit-swamp-of-despair.jpeg" width = 900 ><sup>(2)</sup>
+  <img src="main/img/pit-swamp-of-despair.jpeg" width = 900 >
 </p>
+<br> 
+<hr style="border:6px solid gray; background-color:gray"> </hr>
+<br>
+<hr style="border:1px solid gray; background-color:gray"> </hr> 
+<br>
+<hr style="border:6px solid gray; background-color:gray"> </hr> 
+<br>
 
-*Capstone II Project for Galvanize Data Science Immersive, Week 8*
-
-*by Marc Russell*
-
-# Dude, What's That Car?
-### Identify and classify automobiles using images 
-
+<p align="left" style="font-size:1.9em;">
+Dude, What's That Car?
+</p>
+<p align="left" style="font-size:1.2em;">
+Automobile Image Classifier
+</p>
+<p align="left" style="font-size:0.7em;">
+<em>by Marc Russell</em>
+<br>
+<br>
+<em>Capstone II Project for Galvanize Data Science Immersive, Week 8</em>
+</p>
+<hr>
+<br>
 
 ## Table of Contents
 - [Introduction](#introduction)
   - [Motivation](#motivation)
+  - [Goals](#goals)
+    - [Minimum Viable Product](#minimum-viable-product)
+    - [Near-Future Goals (MVP+)](#near-future-goals-(MVP+))
+    - [Far-Future Goals (MVP++)](#far-future-goals-(MVP+))
   - [The Data](#the-data)
-  - [Questions](#questions)
 - [Image Pipeline](#image-pipeline)
-  - []
   - [Transformations](#transformations)
-- [Exploratory Data Analysis](#exploratory-data-analysis)
-  - [Dataset Overview](#dataset-overview)
-  - [Feature Categories](#feature-categories)
-  - [Exploration](#exploration)
-    - [Weather](#weather)
-
 - [Model](#model)
 - [Conclusion](#conclusion)
 - [Citation](#citation)
@@ -55,7 +65,7 @@ Owners of motorized vehicles driven on public thoroughfares are required by law 
   <img src="main/img/alpr-purpose.png" width = 500 ><sup>(2)</sup>
 </p>
 
-Law enforcement practitioners are often searching for vehicles that have been reported stolen, are suspected of being involved in criminal or terrorist activities, are owned by persons who are wanted by authorities, have failed to pay parking violations or maintain current vehicle license registration or insurance, or any of a number of other legitimate reasons. To aid in this search ALPR Technology can relay theh following information:
+Law enforcement are often searching for vehicles that have been reported stolen, have failed to maintain current vehicle license registration, are suspected of being involved in criminal activities, or any of a number of other legitimate reasons. To aid in this search ALPR Technology can relay the following information:
 
     a. Character and/or plate color
     b. Plate design factors (logos, stacked characters, etc.)
@@ -68,10 +78,43 @@ Law enforcement practitioners are often searching for vehicles that have been re
     i. Weather conditions (e.g., snow, rain, fog)
     j. ALPR equipment (e.g., age and/or ability of the ALPR camera)
     k. ALPR implementation (e.g., camera angle) 
-  
-Issues arrise when 
+<p align="center">
+  <img src="main/img/mobile-alpr2.png" width = 650 >
+</p> 
+There are several types of ALPR systems that range in effectiveness. For example, the capture rate of mobile ALPR systems are often ~10% worse than stationary systems.
 
-alpr-purpose.png
+
+<p align="center">
+  <img src="main/img/fixed-alpr.png" width = 650 >
+</p> 
+
+<p align="center">
+  <img src="main/img/alpr-gui.png" width = 350 >
+</p>
+
+[Back to Top](#Table-of-Contents)
+
+## Goals
+### Minimum Viable Product
+Classify car images with and accuracy comprable to that of ALPR's overall accuracy while minimizing false negatives.
+<p align="center">
+  <img src="main/img/alpr-capture-rate.png" width = 550 >
+</p>
+
+### Near-Future Goals (MVP+)
+
+Deployable car image classifier application for mobile users that leverages their camera and wireless internet connection.
+
+
+### Far-Future Goals (MVP++)
+
+Deployable application for police mobile-computers.
+
+Fully deployable, augmented reality, application for mobile devices that allow users to point towards an automobile and it, in real time, identifies the car and retrieves relevant information. Users can then look up cars with similar body styles, performance classes, prices, drivetrain styles, and more.
+
+Improve the model by using user-submitted data.
+
+[Back to Top](#Table-of-Contents)
 
 ## The Data
 
@@ -106,58 +149,40 @@ Left: 64x64 &nbsp; &nbsp;  &nbsp; | &nbsp;  &nbsp;  &nbsp; Middle: 32x32 &nbsp; 
   <figcaption>Above: Originial Image (~600x500)</figcaption>
 </figure>
 
+[Back to Top](#Table-of-Contents)
 
-<p align="center">
-  <img src="main/img/civic-g16.jpg" width = 650 >
-</p>
+# Image Pipeline
+## Transformations
+Images were stored in folders according to the make, model, (sometimes sub-model or body-type),year. These label-named folders (with images inside) comprised the dataset. 
 
+I read in a subset of the image files being sure to choose two classes that were visually different and that had many (hundreds) of images. The subset of images were scaled down (distorting some) and converted to grayscale.
 
-MVP (Minimum Viable Product)
-1. fdf
-2. (unsupervised learning) car recommenders, price predictors, (more supervised)
-satellite car-image identification, (NLP) car description/rating analysis, and
-making this into a deployable application for mobile phone users and for police
-mobile computers.
+Other transformations may prove useful when testing the model in the future. I'm excited to try applying zooms, crops, rotations, mirroring, bluring, sobel, canny, denoising, etc. This will greatly increase the size of the dataset.
 
 [Back to Top](#Table-of-Contents)
 
-# Exploratory Data Analysis
+# Model
+## Random Forest
+<p align="center">
+  <img src="main/img/forest.jpg" width = 550 ><sup>(3)</sup>
+</p>
+Before choosing a model I researched the 'giants' for whom which I will standing on their shoulders. Muhammad Asif Manzoor and Yasser Morgan published a great paper detailing how they used a random forest classificatier on a similar problem. They describe a <em>successful</em> model architecture used for classifying vehicle make and model for intelligent transportation systems.
 
-## Dataset Overview
+Out of boot (bag) score was very similar to, or better than, the test accuracy scores.
 
-Accident Dataset:
- - 49 columns and 3 million rows
- - Columns describe the accident event
- - Each row is a unique accident event
- 
-IRS Dataset:
- - 153 columns and 1 million rows
- - Each Column is an amount for each tax variable
- - Each Zipcode has 6 rows (one for each income division)
+<p align="center">
+  <img src="main/img/rf-num-tree-10k-acc.png" width = 550 >
+</p>
 
-## Feature Categories
+<p align="center">
+  <img src="main/img/rf-num-tree-10k-prec.png" width = 550 >
+</p>
 
+<p align="center">
+  <img src="main/img/rf-num-tree-10k-rec.png" width = 550 >
+</p>
 
-* Accident Results:
-
-       Accident Counts (rows), Severity, Length of Road Effected, Description
-
-* Weather:
-
-      Temperature, Weather Condition, Precipitation, Visibility
-
-* Road Attributes:
-
-      Nearby Traffic Signs (Yield, Stop, etc.), Railroads, Speed Bumps, Merges
-      
-* Geo-positional:
-
-      Latitude, Longitude, State, County, City, Zipcode
-
-
-## Exploration
-
-
+Next I'm excited to increase number of classes. With 14 classes, accuracy wa
 
 [Back to Top](#Table-of-Contents)
 
@@ -176,9 +201,13 @@ I hope to return to this dataset soon and explore the remaining corners. It will
 
 # Citation
 
-<sup>(1)</sup>
+<sup>(1)</sup>*Car Image Dataset, http://vmmrdb.cecsresearch.org/*
 
 
-*<sup>2</sup>Automated License Plate Reader Systems: Policy and Operational Guidance for Law Enforcement, https://www.ncjrs.gov/pdffiles1/nij/grants/239604.pdf *
+<sup>(2)</sup>*Automated License Plate Reader Systems: Policy and Operational Guidance for Law Enforcement, https://www.ncjrs.gov/pdffiles1/nij/grants/239604.pdf*
+
+<sup>(3)</sup>*forest 137, https://jooinn.com/forest-54.html*
+
+<sup>(4)</sup>*M. A. Manzoor and Y. Morgan, "Vehicle make and model recognition using random forest classification for intelligent transportation systems," 2018 IEEE 8th Annual Computing and Communication Workshop and Conference (CCWC), Las Vegas, NV, 2018, pp. 148-154, doi: 10.1109/CCWC.2018.8301714.*
 
 [Back to Top](#Table-of-Contents)
