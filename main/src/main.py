@@ -513,19 +513,19 @@ def plot_recalls(df):
     ax.plot(df.num_trees, 
             (100*df.recall_gray_16), 
             label = '16x16',
-            color = '#ffb65c'
+            color = '#fabaff'
             )
 
     ax.plot(df.num_trees, 
             (100*df.recall_gray_32), 
             label = '32x32',
-            color = '#f08400'
+            color = '#bb00c9'
             )
 
     ax.plot(df.num_trees, 
             (100*df.recall_gray_64), 
             label = '64x64',
-            color = '#824800'
+            color = '#670070'
             )
 
     hline_height = 100 * df[['recall_gray_16', 

@@ -9,17 +9,10 @@
 <hr style="border:6px solid gray; background-color:gray"> </hr> 
 <br>
 
-<p align="left" style="font-size:1.9em;">
-Dude, What's That Car?
-</p>
-<p align="left" style="font-size:1.2em;">
-Automobile Image Classifier
-</p>
-<p align="left" style="font-size:0.7em;">
-<em>by Marc Russell</em>
-<br>
-<br>
-<em>Capstone II Project for Galvanize Data Science Immersive, Week 8</em>
+# Dude, What's That Car?
+## Automobile Image Classifier
+##### <em>by Marc Russell</em>
+##### <em>Capstone II Project for Galvanize Data Science Immersive, Week 8</em>
 </p>
 <hr>
 <br>
@@ -124,13 +117,11 @@ Containing 9,170 classes consisting of 291,752 images, covering models manufactu
 
 Images were taken by different users, on different imaging devices, and cover multiple perspectives, ensuring a wide range of variations to account for various scenarios that could be encountered in a real-life scenario. The cars are not well aligned, and some images contain irrelevant backgrounds.
 
-<p align="center" style="font-size:1.5em;">
-Example Images
-</p>
-<figure class="image" align="center">
+<p align="center">
   <img src="main/img/f150-full.jpg" width = 450 >
-  <figcaption>Above: Originial Image (~600x500)
-</figure>
+  <br>
+  Above: Originial Image (~600x500)
+</p>
 <p align="center">
   <img src="main/img/f150-g64.jpg" width = 150 >
   <img src="main/img/f150-g32.jpg" width = 150 >
@@ -143,17 +134,19 @@ Left: 64x64 &nbsp; &nbsp;  &nbsp; | &nbsp;  &nbsp;  &nbsp; Middle: 32x32 &nbsp; 
   <img src="main/img/civic-g64.jpg" width = 150 >
   <img src="main/img/civic-g32.jpg" width = 150 >
   <img src="main/img/civic-g16.jpg" width = 150 >
+  <br>
+  Below: Originial Image (~600x500)
 </p>
-<figure class="image" align="center">
+
+<p align="center">
   <img src="main/img/civic-full.jpg" width = 450 >
-  <figcaption>Above: Originial Image (~600x500)</figcaption>
-</figure>
+</p>
 
 [Back to Top](#Table-of-Contents)
 
 # Image Pipeline
 ## Transformations
-Images were stored in folders according to the make, model, (sometimes sub-model or body-type),year. These label-named folders (with images inside) comprised the dataset. 
+Images were stored in folders according to the make, model, (sometimes sub-model or body-type), year. These label-named folders (with images inside) comprised the dataset. 
 
 I read in a subset of the image files being sure to choose two classes that were visually different and that had many (hundreds) of images. The subset of images were scaled down (distorting some) and converted to grayscale.
 
@@ -182,20 +175,16 @@ Out of boot (bag) score was very similar to, or better than, the test accuracy s
   <img src="main/img/rf-num-tree-10k-rec.png" width = 550 >
 </p>
 
-Next I'm excited to increase number of classes. With 14 classes, accuracy wa
+Next I'm looking forward to increase number of classes. With 14 classes, accuracy fell to around ~50%
 
 [Back to Top](#Table-of-Contents)
 
 
 # Conclusion
 
-I initially wanted to focus my study on how weather conditions effect accident rates. It turned out that adjusting my data to account for the fact that is not independent and identically distributed (IID) proved difficult. To remedy this, I would source a dataset of locational-hourly-weather and merged with the accident data set. Instead I decided to shift focus to exploring how accident counts change with location.
+The dataset contains features that are going to allow me to correctly catagorize with an accuracy significantly better than guessing.
 
-I found the relationships of state-to-state accident rates very interesting. Despite the data not being IID I was able to merge a population dataset with the accident counts to achieve a rate - the number of accidents per person per year in each state. This subtle change allows us to compare states between each other despite variable populations. It turns out that South Carolina has the highest accident rate while North and South Dakota have the lowest accident rates.
-
-Lastly I looked at the relationship between time and accident counts. It quickly became apparent that the accident counts over time were also not IID. I decided to explore the relationship anyway, being careful not to draw strict conclusions. Over the course of the day it was expected to see the double rush hour peak. On the other hand, I found it surprising that the seasonal rise in accident counts happened during fall and not winter. 
-
-I hope to return to this dataset soon and explore the remaining corners. It will also be a fun challenge to merge the aforementioned dataset which will allow me to draw conclusions where I was not able to before.
+I'm very excited to continue working on this project.
 
 [Back to Top](#Table-of-Contents)
 
