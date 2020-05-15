@@ -128,7 +128,7 @@ Images were taken by different users, on different imaging devices, and cover mu
   <img src="main/img/f150-g16.jpg" width = 200 >
 </p>
 <p align="center">
-<em>Left:</em> 64x64 &nbsp; &nbsp;   &nbsp;   &nbsp;   &nbsp;   &nbsp;   &nbsp;  &nbsp; &nbsp;  &nbsp; | &nbsp;   &nbsp;  &nbsp;  &nbsp;  &nbsp; &nbsp; &nbsp;  &nbsp; <em>Middle:</em> 32x32 &nbsp; &nbsp;  &nbsp;  &nbsp; &nbsp;  &nbsp;  &nbsp; &nbsp;  | &nbsp;  &nbsp;  &nbsp; &nbsp;   &nbsp;   &nbsp;  &nbsp;  &nbsp;   &nbsp;  <em>Right:</em> 16x16
+<em>Left:</em> 64x64 &nbsp; &nbsp;    &nbsp;   &nbsp;   &nbsp;  &nbsp; &nbsp;  &nbsp; | &nbsp;   &nbsp;  &nbsp;  &nbsp;  &nbsp; <em>Middle:</em> 32x32   &nbsp; &nbsp;  &nbsp;  &nbsp; &nbsp;  | &nbsp;   &nbsp;   &nbsp;   &nbsp;  &nbsp;  &nbsp;   &nbsp;  <em>Right:</em> 16x16
 </p>
 <p align="center">
   <img src="main/img/civic-g64.jpg" width = 200 >
