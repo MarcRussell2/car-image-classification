@@ -200,3 +200,4 @@ I'm very excited to continue working on this project.
 <sup>(4)</sup>*M. A. Manzoor and Y. Morgan, "Vehicle make and model recognition using random forest classification for intelligent transportation systems," 2018 IEEE 8th Annual Computing and Communication Workshop and Conference (CCWC), Las Vegas, NV, 2018, pp. 148-154, doi: 10.1109/CCWC.2018.8301714.*
 
 [Back to Top](#Table-of-Contents)
+
