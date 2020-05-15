@@ -6,6 +6,10 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
+plt.rcParams.update({'font.size': 22})  # for Frank
+plt.style.use('ggplot')  # for not blue
+np.random.seed(42)  # for reproducibility
+
 from skimage import color, transform, restoration, io, feature, img_as_ubyte
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score, precision_score, recall_score
@@ -21,10 +25,6 @@ from tensorflow.keras.datasets import cifar10
 from tensorflow.keras.optimizers import RMSprop
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 
-
-# !
-# IMPLIMENT THAT FUCKIN CLASS YO!
-# !
 
 class ImagePipeline(object):
 
@@ -309,22 +309,6 @@ class ImagePipeline(object):
         return np.array(X), y
 
 
-def load_and_featurize_data():
-    # The data, split between train and test sets:
-    (X_train, y_train), (X_test, y_test) = cifar10.load_data()
-    print('X_train shape:', X_train.shape)
-    print(X_train.shape[0], 'train samples')
-    print(X_test.shape[0], 'test samples')
-    # Convert class vectors to binary class matrices.
-    X_train = X_train.astype('float32')
-    X_test = X_test.astype('float32')
-    X_train /= 255
-    X_test /= 255
-    y_train = to_categorical(y_train, num_classes)
-    y_test = to_categorical(y_test, num_classes)
-    return X_train, X_test, y_train, y_test
-
-
 def define_model(num_classes, input_shape):
     model = Sequential()
     model.add(Conv2D(32, (3, 3), padding='same',
@@ -542,157 +526,93 @@ def plot_recalls(df):
     plt.tight_layout()
     plt.savefig('../img/rf-num-tree-10k-rec.png')
 
+def Create_Model(df_eval_trans, transformed_sub_dirs, shape=(64, 64, 3),resize=False):
+    for t_sub_dir in transformed_sub_dirs:
+        ip = ImagePipeline(os.path.join('../data/',t_sub_dir))
+        print('Reading Images...\n')
+        ip.read()
+        if resize = True:
+            print('Resizing Images...')
+            ip.resize(shape=shape, save=False)  # 64=.37, 32=.36
+            print('Grayscaling Images...')
+            ip.grayscale()
+            ip.save('gray_64')
+
+        print('Vectorizing...\n')
+        features, target = ip.vectorize()
+        print('splitting train/test \n')
+        X_train, X_test, y_train, y_test = train_test_split(features, target,
+                                                            test_size=0.2,
+                                                            random_state=42)
+        rf_accuracy_lst = []
+        rf_precision_lst = []
+        rf_recall_lst = []
+        rf_num_trees_list = list(np.arange(100,1000,20))
+        rf_num_trees_list.extend(list(np.arange(1000,5000,200)))
+
+        for num_trees in rf_num_trees_list:
+            print('RF',num_trees,'Classifying...', t_sub_dir,'\n')
+            rf = RandomForestClassifier(bootstrap=True,
+                                        ccp_alpha=0.0,
+                                        class_weight='balanced',  # default None
+                                        criterion='gini',
+                                        max_depth=None, #default None
+                                        max_features='auto',  # None = +-8% of % long rt
+                                        max_leaf_nodes=None,
+                                        max_samples=None,
+                                        min_impurity_decrease=0.0,
+                                        min_impurity_split=None,
+                                        min_samples_leaf=1,
+                                        min_samples_split=2,
+                                        min_weight_fraction_leaf=0.0,
+                                        n_estimators=num_trees,  # two class=100=0.70, 1000=0.75,10k=0.74
+                                        n_jobs=-2,  # use all CPUs but 1
+                                        oob_score=True, # Use out-of-bag samples
+                                        random_state=1,
+                                        verbose=0,
+                                        warm_start=False
+                                        )
+            print('RF Fitting...\n')
+            rf.fit(X_train, y_train)
+            print('Predicting...\n')
+            rf_preds = rf.predict(X_test)
+            print('Calculating Accuracy...\n')
+            rf_accuracy_lst.append(accuracy_score(y_test, rf_preds))
+            rf_precision_lst.append(precision_score(y_test, rf_preds))
+            rf_recall_lst.append(recall_score(y_test, rf_preds))
+
+        '''
+        making the df to store the plotted values
+        '''
+        col_name = 'accuracy_'
+        col_name += t_sub_dir
+        df_eval_trans[col_name] = rf_accuracy_lst
+
+        col_name = 'precision_'  
+        col_name += t_sub_dir
+        df_eval_trans[col_name] =  rf_precision_lst
+
+        col_name = 'recall_'
+        col_name += t_sub_dir
+        df_eval_trans[col_name] = rf_recall_lst
+
+    df_eval_trans['num_trees'] = rf_num_trees_list
+    df_eval_trans.to_csv('../data/numerical_data/scores_gray_x.csv')
+    df_eval_trans.to_pickle('../data/numerical_data/scores_gray_x.pkl')
+
+
 if __name__ == '__main__':
-
-    plt.rcParams.update({'font.size': 22})  # for Frank
-    plt.style.use('ggplot')  # for not blue
-    np.random.seed(42)  # for reproducibility
-
     print('\nReading...\n')
-    # df_eval_trans = pd.DataFrame()
-    df_eval_trans = pd.read_pickle('../data/numerical_data/scores_gray_x.pkl')
+    Create_Model(df_eval_trans, transformed_sub_dirs = ['gray_16', 'gray_32', 'gray_64'], (64,64,3))
 
-    num_trees_list = list(np.arange(100,1000,20))
-    num_trees_list.extend(list(np.arange(1000,5000,200)))
-    df_eval_trans['num_trees'] = num_trees_list
+    df_eval_trans = pd.read_pickle('../data/numerical_data/scores_gray_x.pkl')
 
     print('plotting...\n\n')
     plot_accuracies(df_eval_trans)
     plot_precisions(df_eval_trans)
     plot_recalls(df_eval_trans)
 
-    # transformations = [rgb2gray, sobel, canny, denoise_tv_chambolle, denoise_bilateral]
-
-    # fig = plt.figure()
-    # ax = fig.add_subplot(1, 1, 1)
-
-    # transformed_sub_dirs = ['gray_16', 'gray_32', 'gray_64']
-    # for t_sub_dir in transformed_sub_dirs:
-    #     ip = ImagePipeline(os.path.join('../data/',t_sub_dir))
-    #     print('Reading Images...\n')
-    #     ip.read()
-    #     # print('Resizing Images...')
-    #     # ip.resize(shape=(64, 64, 3), save=False)  # 64=.37, 32=.36
-    #     # print('Grayscaling Images...')
-    #     # ip.grayscale()
-    #     # ip.save('gray_64')
-
-    #     print('Vectorizing...\n')
-    #     features, target = ip.vectorize()
-    #     print('splitting train/test \n')
-    #     X_train, X_test, y_train, y_test = train_test_split(features, target,
-    #                                                         test_size=0.2,
-    #                                                         random_state=42)
-        
-    #     # Random Forest
-
-
-    #     rf_accuracy_lst = []
-    #     rf_precision_lst = []
-    #     rf_recall_lst = []
-    #     rf_num_trees_list = list(np.arange(100,1000,20))
-    #     rf_num_trees_list.extend(list(np.arange(1000,5000,200)))
-
-    #     for num_trees in rf_num_trees_list:
-
-    #         print('RF',num_trees,'Classifying...', t_sub_dir,'\n')
-    #         rf = RandomForestClassifier(bootstrap=True,
-    #                                     ccp_alpha=0.0,
-    #                                     class_weight='balanced',  # default None
-    #                                     criterion='gini',
-    #                                     max_depth=None, #default None
-    #                                     max_features='auto',  # None = +-8% of % long rt
-    #                                     max_leaf_nodes=None,
-    #                                     max_samples=None,
-    #                                     min_impurity_decrease=0.0,
-    #                                     min_impurity_split=None,
-    #                                     min_samples_leaf=1,
-    #                                     min_samples_split=2,
-    #                                     min_weight_fraction_leaf=0.0,
-    #                                     n_estimators=num_trees,  # two class=100=0.70, 1000=0.75,10k=0.74
-    #                                     n_jobs=-2,  # use all CPUs but 1
-    #                                     oob_score=True, # Use out-of-bag samples
-    #                                     random_state=1,
-    #                                     verbose=0,
-    #                                     warm_start=False
-    #                                     )
-    #         print('RF Fitting...\n')
-    #         rf.fit(X_train, y_train)
-    #         print('Predicting...\n')
-    #         rf_preds = rf.predict(X_test)
-    #         print('Calculating Accuracy...\n')
-    #         rf_accuracy_lst.append(accuracy_score(y_test, rf_preds))
-    #         rf_precision_lst.append(precision_score(y_test, rf_preds))
-    #         rf_recall_lst.append(recall_score(y_test, rf_preds))
-
-    #     '''
-    #     making the df to store the plotted values
-    #     '''
-    #     col_name = 'accuracy_'
-    #     col_name += t_sub_dir
-    #     df_eval_trans[col_name] = rf_accuracy_lst
-
-    #     col_name = 'precision_'  
-    #     col_name += t_sub_dir
-    #     df_eval_trans[col_name] =  rf_precision_lst
-
-    #     col_name = 'recall_'
-    #     col_name += t_sub_dir
-    #     df_eval_trans[col_name] = rf_recall_lst
-
-    #     # # plot each evaluation metric for this subdirectory index
-    #     # sub_dir_label_lst = t_sub_dir.split("_")
-    #     # new_label = ''
-    #     # new_label += sub_dir_label_lst[1]+'x'+sub_dir_label_lst[1]+' '+sub_dir_label_lst[0]+ ' - Accuracy'
-    #     # ax.plot(rf_num_trees_list, rf_accuracy_lst, label=new_label)
-    #     # new_label = ''
-    #     # new_label += sub_dir_label_lst[1]+'x'+sub_dir_label_lst[1]+' '+sub_dir_label_lst[0]+ ' - Precision'
-    #     # ax.plot(rf_num_trees_list, rf_precision_lst, label=new_label)
-    #     # new_label = ''
-    #     # new_label += sub_dir_label_lst[1]+'x'+sub_dir_label_lst[1]+' '+sub_dir_label_lst[0]+ ' - Recall'
-    #     # ax.plot(rf_num_trees_list, rf_recall_lst, label=new_label)
-
-    # # ax.legend()
-    # # plt.savefig('../img/rf-num-tree-10k-all.png')
-
-    # df_eval_trans.to_csv('../data/numerical_data/scores_gray_x.csv')
-    # df_eval_trans.to_pickle('../data/numerical_data/scores_gray_x.pkl')
 
 
 
-
-
-
-
-    # print('\n \n start trees list:', rf_num_trees_list)
-    # print('\n \n start acc list:', rf_accuracy_lst)
-    # print('\n \n start prec list:', rf_precision_lst)
-    # print('\n \n start rec list:', rf_recall_lst)
-    
-        
-    #     rf_accuracy = accuracy_score(y_test, rf_preds)
-    #     rf_precision = precision_score(y_test, rf_preds)
-    #     rf_recall = recall_score(y_test, rf_preds)
-    #     print('\n \n RF Accuracy is: ', rf_accuracy, '\n')
-    #     print('\n Out-of-"Boot" Score is: ', rf.oob_score_, '\n')
-    #     print('\n RF Precision is: ', rf_precision, '\n')
-    #     print('\n RF Recall is: ', rf_recall, '\n \n')
-
-    # print('\n Cross Validation Score 5 Folds:'
-    # print('\n Avg Accuracy:',
-    #         np.mean(cross_val_score(rf,X_train,y_train, scoring='accuracy')))
-    # print('\n Avg Precision:',
-    #         np.mean(cross_val_score(rf,X_train,y_train, scoring='precision')))
-    # print('\n Avg Recall:',
-    #         np.mean(cross_val_score(rf,X_train,y_train, scoring='recall')))
-    
-
-    # duration = 1  # seconds
-    # freq = 440  # Hz
-    # os.system('spd-say "your program has finished"')
-
-    # ip.show(sub_dir_idx=0, img_idx=2)
-    # ip.show(sub_dir_idx=0, img_idx=1)
-    # ip.show(sub_dir_idx=2, img_idx=2)
-    # ip.show(sub_dir_idx=2, img_idx=1)
-
+ 
