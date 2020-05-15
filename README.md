@@ -164,15 +164,15 @@ Before choosing a model I researched the 'giants' for whom which I will standing
 Out of boot (bag) score was very similar to, or better than, the test accuracy scores.
 
 <p align="center">
-  <img src="main/img/rf-num-tree-10k-acc.png" width = 550 >
+  <img src="main/img/rf-num-tree-10k-acc.png" width = 650 >
 </p>
 
 <p align="center">
-  <img src="main/img/rf-num-tree-10k-prec.png" width = 550 >
+  <img src="main/img/rf-num-tree-10k-prec.png" width = 650 >
 </p>
 
 <p align="center">
-  <img src="main/img/rf-num-tree-10k-rec.png" width = 550 >
+  <img src="main/img/rf-num-tree-10k-rec.png" width = 650 >
 </p>
 
 Next I'm looking forward to increase number of classes. With 14 classes, accuracy fell to around ~50%
