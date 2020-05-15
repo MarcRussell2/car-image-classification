@@ -306,6 +306,7 @@ class ImagePipeline(object):
 
 
 def define_model(num_classes, input_shape):
+    # Taken from an example but not used
     model = Sequential()
     model.add(Conv2D(32, (3, 3), padding='same',
                      input_shape=input_shape))
@@ -340,7 +341,7 @@ def compile_model(model, optimizer):
 
 def train_model(model, data_augmentation, batch_size, epochs,
                 X_train, X_test, y_train, y_test):
-
+    # Taken from an example but not used
     if not data_augmentation:
         print('Not using data augmentation.')
         model.fit(X_train, y_train,
