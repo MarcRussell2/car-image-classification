@@ -9,7 +9,7 @@
 <hr style="border:6px solid gray; background-color:gray"> </hr> 
 <br>
 
-<p align="left" style="font-size:1.9em;">
+<p align="left" style="font-size:25;">
 Dude, What's That Car?
 </p>
 <p align="left" style="font-size:1.2em;">
