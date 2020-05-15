@@ -6,10 +6,6 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
-plt.rcParams.update({'font.size': 22})  # for Frank
-plt.style.use('ggplot')  # for not blue
-np.random.seed(42)  # for reproducibility
-
 from skimage import color, transform, restoration, io, feature, img_as_ubyte
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score, precision_score, recall_score
@@ -526,14 +522,14 @@ def plot_recalls(df):
     plt.tight_layout()
     plt.savefig('../img/rf-num-tree-10k-rec.png')
 
-def Create_Model(df, transformed_sub_dirs, shape=(64, 64, 3),resize=False):
+def Create_Model(df, transformed_sub_dirs, s=(64, 64, 3),resize=False):
     for t_sub_dir in transformed_sub_dirs:
         ip = ImagePipeline(os.path.join('../data/',t_sub_dir))
         print('Reading Images...\n')
         ip.read()
         if resize == True:
             print('Resizing Images...')
-            ip.resize(shape=shape, save=False)  # 64=.37, 32=.36
+            ip.resize(shape=s, save=False)  # 64=.37, 32=.36
             print('Grayscaling Images...')
             ip.grayscale()
             ip.save('gray_64')
@@ -602,6 +598,11 @@ def Create_Model(df, transformed_sub_dirs, shape=(64, 64, 3),resize=False):
 
 
 if __name__ == '__main__':
+    # Set global params
+    plt.rcParams.update({'font.size': 22})  # for Frank :)
+    plt.style.use('ggplot')  # for not blue
+    np.random.seed(42)  # Don't Panic!
+
     print('\nReading...\n')
     Create_Model(df=df_eval_trans, transformed_sub_dirs = ['gray_16', 'gray_32', 'gray_64'], s=(64,64,3))
 
