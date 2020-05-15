@@ -52,7 +52,7 @@ According to a 2011 study, 71% of police agencies reported using ALPR and 85% pl
 
 ### The Job and ALPR
 
-Owners of motorized vehicles driven on public thoroughfares are required by law to annually register their vehicles and to attach license plates that are publicly and legibly displayed.
+Automatic Number Plate Readers were invented in 1976 at the Police Scientific Development Branch in Britain.<sup>5</sup> Prototype systems were working by 1979 and the first stolen-car-detection arrest was in 1981.
 
 <p align="center">
   <img src="main/img/alpr-purpose.png" width = 500 ><sup>(2)</sup>
@@ -75,7 +75,6 @@ Law enforcement are often searching for vehicles that have been reported stolen,
   <img src="main/img/mobile-alpr2.png" width = 650 ><sup>(2)</sup>
 </p> 
 There are several types of ALPR systems that range in effectiveness. For example, the capture rate of mobile ALPR systems are often ~10% worse than stationary systems.
-
 
 <p align="center">
   <img src="main/img/fixed-alpr.png" width = 650 ><sup>(2)</sup>
@@ -198,6 +197,8 @@ I'm very excited to continue working on this project.
 <sup>(3)</sup>*forest 137, https://jooinn.com/forest-54.html*
 
 <sup>(4)</sup>*M. A. Manzoor and Y. Morgan, "Vehicle make and model recognition using random forest classification for intelligent transportation systems," 2018 IEEE 8th Annual Computing and Communication Workshop and Conference (CCWC), Las Vegas, NV, 2018, pp. 148-154, doi: 10.1109/CCWC.2018.8301714.*
+
+<sup>5</sup>  "History of ANPR". ANPR Internatonal. Retrieved 18 December 2019, http://www.anpr-international.com/history-of-anpr/
 
 [Back to Top](#Table-of-Contents)
 
