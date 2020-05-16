@@ -1,14 +1,3 @@
-<p align="center">
-  <img src="main/img/pit-swamp-of-despair.jpeg" width = 900 >
-</p>
-<br> 
-<hr style="border:6px solid gray; background-color:gray"> </hr>
-<br>
-<hr style="border:1px solid gray; background-color:gray"> </hr> 
-<br>
-<hr style="border:6px solid gray; background-color:gray"> </hr> 
-<br>
-
 # Dude, What's That Car?
 ## Automobile Image Classifier
 ##### <em>by Marc Russell</em>
