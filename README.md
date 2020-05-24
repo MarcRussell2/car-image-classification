@@ -1,4 +1,9 @@
+<<<<<<< HEAD
 # Automobile Image Classifier
+=======
+# Dude, What's That Car?
+## Automobile Image Classifier
+>>>>>>> b19b91e3ade336953ad9003d0ab7999121952a90
 ##### <em>by Marc Russell</em>
 ##### <em>Capstone III Project for Galvanize Data Science Immersive, Week 8</em>
 </p>
@@ -40,7 +45,7 @@ According to a 2011 study, 71% of police agencies reported using ALPR and 85% pl
 
 ### The Job and ALPR
 
-Owners of motorized vehicles driven on public thoroughfares are required by law to annually register their vehicles and to attach license plates that are publicly and legibly displayed.
+Automatic Number Plate Readers were invented in 1976 at the Police Scientific Development Branch in Britain.<sup>5</sup> Prototype systems were working by 1979 and the first stolen-car-detection arrest was in 1981.
 
 <p align="center">
   <img src="reports/figures/alpr-purpose.png" width = 500 ><sup>(2)</sup>
@@ -63,7 +68,6 @@ Law enforcement are often searching for vehicles that have been reported stolen,
   <img src="reports/figures/mobile-alpr2.png" width = 650 ><sup>(2)</sup>
 </p> 
 There are several types of ALPR systems that range in effectiveness. For example, the capture rate of mobile ALPR systems are often ~10% worse than stationary systems.
-
 
 <p align="center">
   <img src="reports/figures/fixed-alpr.png" width = 650 ><sup>(2)</sup>
@@ -147,9 +151,7 @@ Other transformations may prove useful when testing the model in the future. I'm
 <p align="center">
   <img src="reports/figures/forest.jpg" width = 550 ><sup>(3)</sup>
 </p>
-Before choosing a model I researched the 'giants' for whom which I will standing on their shoulders. Muhammad Asif Manzoor and Yasser Morgan published a great paper detailing how they used a random forest classificatier on a similar problem. They describe a <em>successful</em> model architecture used for classifying vehicle make and model for intelligent transportation systems.
-
-Out of boot (bag) score was very similar to, or better than, the test accuracy scores.
+Before choosing a model I researched the 'giants' for whom which I will standing on their shoulders. Muhammad Asif Manzoor and Yasser Morgan published a great paper detailing how they used a random forest classificatier on a similar problem.<sup>(4)</sup> They describe a <em>successful</em> model architecture used for classifying vehicle make and model for intelligent transportation systems.
 
 <p align="center">
   <img src="reports/figures/rf-num-tree-10k-acc.png" width = 650 >
@@ -162,6 +164,8 @@ Out of boot (bag) score was very similar to, or better than, the test accuracy s
 <p align="center">
   <img src="reports/figures/rf-num-tree-10k-rec.png" width = 650 >
 </p>
+
+Out of boot (bag) score was very similar to, or better than, the test accuracy scores.
 
 Next I'm looking forward to increase number of classes. With 14 classes, accuracy fell to around ~50%
 
@@ -186,6 +190,8 @@ I'm very excited to continue working on this project.
 <sup>(3)</sup>*forest 137, https://jooinn.com/forest-54.html*
 
 <sup>(4)</sup>*M. A. Manzoor and Y. Morgan, "Vehicle make and model recognition using random forest classification for intelligent transportation systems," 2018 IEEE 8th Annual Computing and Communication Workshop and Conference (CCWC), Las Vegas, NV, 2018, pp. 148-154, doi: 10.1109/CCWC.2018.8301714.*
+
+<sup>(5)</sup>  "History of ANPR". ANPR Internatonal. Retrieved 18 December 2019, http://www.anpr-international.com/history-of-anpr/
 
 [Back to Top](#Table-of-Contents)
 
