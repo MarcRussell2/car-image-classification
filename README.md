@@ -1,18 +1,6 @@
-<p align="center">
-  <img src="main/img/pit-swamp-of-despair.jpeg" width = 900 >
-</p>
-<br> 
-<hr style="border:6px solid gray; background-color:gray"> </hr>
-<br>
-<hr style="border:1px solid gray; background-color:gray"> </hr> 
-<br>
-<hr style="border:6px solid gray; background-color:gray"> </hr> 
-<br>
-
-# Dude, What's That Car?
-## Automobile Image Classifier
+# Automobile Image Classifier
 ##### <em>by Marc Russell</em>
-##### <em>Capstone II Project for Galvanize Data Science Immersive, Week 8</em>
+##### <em>Capstone III Project for Galvanize Data Science Immersive, Week 8</em>
 </p>
 <hr>
 <br>
@@ -42,7 +30,7 @@ the vehicle that they are attached to.
 This job is greatly assisted by automatic license plate reader/recognition (ALPR) technology which relays the licence plate number to the officer. After the ALPR sends the plate number to the officer’s mobile computer, there is one tedious task remaining - confirming that the vehicle matches the description linked to the plate number. 
 
 <p align="center">
-  <img src="main/img/mobile-alpr.png" width = 600 ><sup>(2)</sup>
+  <img src="reports/figures/mobile-alpr.png" width = 600 ><sup>(2)</sup>
 </p>
 
 I haven’t seen one (public) attempt to apply machine learning and image recognition to this tedious job.
@@ -55,7 +43,7 @@ According to a 2011 study, 71% of police agencies reported using ALPR and 85% pl
 Owners of motorized vehicles driven on public thoroughfares are required by law to annually register their vehicles and to attach license plates that are publicly and legibly displayed.
 
 <p align="center">
-  <img src="main/img/alpr-purpose.png" width = 500 ><sup>(2)</sup>
+  <img src="reports/figures/alpr-purpose.png" width = 500 ><sup>(2)</sup>
 </p>
 
 Law enforcement are often searching for vehicles that have been reported stolen, have failed to maintain current vehicle license registration, are suspected of being involved in criminal activities, or any of a number of other legitimate reasons. To aid in this search ALPR Technology can relay the following information:
@@ -72,17 +60,17 @@ Law enforcement are often searching for vehicles that have been reported stolen,
     j. ALPR equipment (e.g., age and/or ability of the ALPR camera)
     k. ALPR implementation (e.g., camera angle) 
 <p align="center">
-  <img src="main/img/mobile-alpr2.png" width = 650 ><sup>(2)</sup>
+  <img src="reports/figures/mobile-alpr2.png" width = 650 ><sup>(2)</sup>
 </p> 
 There are several types of ALPR systems that range in effectiveness. For example, the capture rate of mobile ALPR systems are often ~10% worse than stationary systems.
 
 
 <p align="center">
-  <img src="main/img/fixed-alpr.png" width = 650 ><sup>(2)</sup>
+  <img src="reports/figures/fixed-alpr.png" width = 650 ><sup>(2)</sup>
 </p> 
 
 <p align="center">
-  <img src="main/img/alpr-gui.png" width = 350 ><sup>(2)</sup>
+  <img src="reports/figures/alpr-gui.png" width = 350 ><sup>(2)</sup>
 </p>
 
 [Back to Top](#Table-of-Contents)
@@ -91,7 +79,7 @@ There are several types of ALPR systems that range in effectiveness. For example
 ### Minimum Viable Product
 Classify car images with an accuracy comprable to that of ALPR's overall accuracy while minimizing false negatives.
 <p align="center">
-  <img src="main/img/alpr-capture-rate.png" width = 550 ><sup>(2)</sup>
+  <img src="reports/figures/alpr-capture-rate.png" width = 550 ><sup>(2)</sup>
 </p>
 
 ### Near-Future Goals (MVP+)
@@ -118,28 +106,28 @@ Containing 9,170 classes consisting of 291,752 images, covering models manufactu
 Images were taken by different users, on different imaging devices, and cover multiple perspectives, ensuring a wide range of variations to account for various scenarios that could be encountered in a real-life scenario. The cars are not well aligned, and some images contain irrelevant backgrounds.
 
 <p align="center">
-  <img src="main/img/f150-full.jpg" width = 600 >
+  <img src="reports/figures/f150-full.jpg" width = 600 >
   <br>
   <em>Above:</em> Originial Image (~600x500)
 </p>
 <p align="center">
-  <img src="main/img/f150-g64.jpg" width = 200 >
-  <img src="main/img/f150-g32.jpg" width = 200 >
-  <img src="main/img/f150-g16.jpg" width = 200 >
+  <img src="reports/figures/f150-g64.jpg" width = 200 >
+  <img src="reports/figures/f150-g32.jpg" width = 200 >
+  <img src="reports/figures/f150-g16.jpg" width = 200 >
 </p>
 <p align="center">
 <em>Left:</em> 64x64 &nbsp; &nbsp;    &nbsp;   &nbsp;   &nbsp;  &nbsp; &nbsp;  &nbsp; | &nbsp;   &nbsp;  &nbsp;  &nbsp;  &nbsp; <em>Middle:</em> 32x32   &nbsp; &nbsp;  &nbsp;  &nbsp; &nbsp;  | &nbsp;   &nbsp;   &nbsp;   &nbsp;  &nbsp;  &nbsp;   &nbsp;  <em>Right:</em> 16x16
 </p>
 <p align="center">
-  <img src="main/img/civic-g64.jpg" width = 200 >
-  <img src="main/img/civic-g32.jpg" width = 200 >
-  <img src="main/img/civic-g16.jpg" width = 200 >
+  <img src="reports/figures/civic-g64.jpg" width = 200 >
+  <img src="reports/figures/civic-g32.jpg" width = 200 >
+  <img src="reports/figures/civic-g16.jpg" width = 200 >
   <br>
   <em>Below:</em> Originial Image (~600x500)
 </p>
 
 <p align="center">
-  <img src="main/img/civic-full.jpg" width = 600 >
+  <img src="reports/figures/civic-full.jpg" width = 600 >
 </p>
 
 [Back to Top](#Table-of-Contents)
@@ -157,22 +145,22 @@ Other transformations may prove useful when testing the model in the future. I'm
 # Model
 ## Random Forest
 <p align="center">
-  <img src="main/img/forest.jpg" width = 550 ><sup>(3)</sup>
+  <img src="reports/figures/forest.jpg" width = 550 ><sup>(3)</sup>
 </p>
 Before choosing a model I researched the 'giants' for whom which I will standing on their shoulders. Muhammad Asif Manzoor and Yasser Morgan published a great paper detailing how they used a random forest classificatier on a similar problem. They describe a <em>successful</em> model architecture used for classifying vehicle make and model for intelligent transportation systems.
 
 Out of boot (bag) score was very similar to, or better than, the test accuracy scores.
 
 <p align="center">
-  <img src="main/img/rf-num-tree-10k-acc.png" width = 650 >
+  <img src="reports/figures/rf-num-tree-10k-acc.png" width = 650 >
 </p>
 
 <p align="center">
-  <img src="main/img/rf-num-tree-10k-prec.png" width = 650 >
+  <img src="reports/figures/rf-num-tree-10k-prec.png" width = 650 >
 </p>
 
 <p align="center">
-  <img src="main/img/rf-num-tree-10k-rec.png" width = 650 >
+  <img src="reports/figures/rf-num-tree-10k-rec.png" width = 650 >
 </p>
 
 Next I'm looking forward to increase number of classes. With 14 classes, accuracy fell to around ~50%
