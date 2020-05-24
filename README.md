@@ -1,9 +1,4 @@
-<<<<<<< HEAD
-# Automobile Image Classifier
-=======
-# Dude, What's That Car?
-## Automobile Image Classifier
->>>>>>> b19b91e3ade336953ad9003d0ab7999121952a90
+# Car Image Classification
 ##### <em>by Marc Russell</em>
 ##### <em>Capstone III Project for Galvanize Data Science Immersive, Week 8</em>
 </p>
