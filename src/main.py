@@ -1,4 +1,3 @@
-print('\n \n Importing...\n')
 import os
 import re
 import pdb
@@ -66,7 +65,7 @@ class ImagePipeline(object):
         :param new_dir: The name of a new sub dir
         """
         # Make a new directory for the new transformed images
-        new_dir = os.path.join(self.cur_path, new_dir)
+        new_dir = os.path.join(self.parent_dir, new_dir)
         if not os.path.exists(new_dir):
             os.mkdir(new_dir)
         else:
@@ -150,25 +149,26 @@ class ImagePipeline(object):
                         new sub directories that we are saving to
         """
         # Use the keyword to make the new names of the sub dirs
+        # pdb.set_trace()
+        new_sub_dirs = [os.path.join(sub_dir, '../../../interim/image_data', keyword) for sub_dir in self.sub_dirs]
         # new_sub_dirs = ['%s.%s' % (sub_dir, keyword) for sub_dir in self.sub_dirs]
-        new_sub_dirs = ['%s.%s' % (sub_dir, keyword)
-                        for sub_dir in self.sub_dirs]
-        new_sub_dirs_split = [os.path.split(
-            new_sub_dir) for new_sub_dir in new_sub_dirs]
-        new_sub_dirs = [os.path.join(new_sub_dir_split[0], keyword, new_sub_dir_split[1])
-                        for new_sub_dir_split in new_sub_dirs_split]
+        # new_sub_dirs_split = [os.path.split( new_sub_dir) for new_sub_dir in new_sub_dirs]
+        # new_sub_dirs = [os.path.join(new_sub_dir_split[0], keyword, new_sub_dir_split[1])
+        #                 for new_sub_dir_split in new_sub_dirs_split]
 
         # Make new sub dir to hold all transformed sub_dirs (image folders)
-        self._make_new_dir(os.path.split(new_sub_dirs[0])[0])
+        # self._make_new_dir(os.path.split(new_sub_dirs[0])[0])
+        self._make_new_dir(new_sub_dirs[0])
 
         # Loop through the sub dirs and loop through images to save images to the respective subdir
-        for new_sub_dir, img_names, img_lst in zip(new_sub_dirs, self.img_names2, self.img_lst2):
-            new_sub_dir_path = self._path_relative_to_parent(new_sub_dir)
-            self._make_new_dir(new_sub_dir_path)
+        # for new_sub_dir, img_names, img_lst in zip(new_sub_dirs, self.img_names2, self.img_lst2):
+        for img_folders, img_names, img_lst in zip(self.raw_sub_dir_names, self.img_names2, self.img_lst2):
+            # sub_dir = self._path_relative_to_parent(img_folders)
+            self._make_new_dir(os.path.join(new_sub_dirs[0], img_folders))
 
             for fname, img_arr in zip(img_names, img_lst):
-                io.imsave(os.path.join(new_sub_dir_path, fname),
-                          img_as_ubyte(img_arr))
+                io.imsave(os.path.join(new_sub_dirs[0], img_folders, fname),
+                          img_as_ubyte(img_arr), check_contrast=False)
         self.sub_dirs = new_sub_dirs
 
     def show(self, img_idx, sub_dir=None, sub_dir_idx=None):
@@ -410,7 +410,8 @@ def plot_recalls(df):
     plt.tight_layout()
     plt.savefig('../reports/figures/rf-num-tree-10k-rec.png')
 
-def Create_Model(df, transformed_sub_dirs, s=(64, 64, 3),resize=False):
+def Create_forest(transformed_sub_dirs, s=(64, 64, 3),resize=False):
+    df = pd.DataFrame()
     for t_sub_dir in transformed_sub_dirs:
         ip = ImagePipeline(os.path.join('../data/interim/image_data',t_sub_dir))
         print('Reading Images...\n')
@@ -431,8 +432,8 @@ def Create_Model(df, transformed_sub_dirs, s=(64, 64, 3),resize=False):
         rf_accuracy_lst = []
         rf_precision_lst = []
         rf_recall_lst = []
-        rf_num_trees_list = list(np.arange(100,1000,20))
-        rf_num_trees_list.extend(list(np.arange(1000,5000,200)))
+        rf_num_trees_list = list(np.arange(100,1000,40))
+        rf_num_trees_list.extend(list(np.arange(1000,5000,400)))
 
         for num_trees in rf_num_trees_list:
             print('RF',num_trees,'Classifying...', t_sub_dir,'\n')
@@ -462,8 +463,8 @@ def Create_Model(df, transformed_sub_dirs, s=(64, 64, 3),resize=False):
             rf_preds = rf.predict(X_test)
             print('Calculating Accuracy...\n')
             rf_accuracy_lst.append(accuracy_score(y_test, rf_preds))
-            rf_precision_lst.append(precision_score(y_test, rf_preds))
-            rf_recall_lst.append(recall_score(y_test, rf_preds))
+            rf_precision_lst.append(precision_score(y_test, rf_preds, average='weighted'))
+            rf_recall_lst.append(recall_score(y_test, rf_preds, average='weighted'))
 
         '''
         making the df to store the plotted values
@@ -483,6 +484,7 @@ def Create_Model(df, transformed_sub_dirs, s=(64, 64, 3),resize=False):
     df['num_trees'] = rf_num_trees_list
     df.to_csv('../data/interim/numerical_data/scores_gray_x.csv')
     df.to_pickle('../data/interim/numerical_data/scores_gray_x.pkl')
+    return df
 
 
 if __name__ == '__main__':
@@ -492,7 +494,7 @@ if __name__ == '__main__':
     np.random.seed(42)  # Don't Panic!
 
     print('\nReading...\n')
-    Create_Model(df=df_eval_trans, transformed_sub_dirs = ['gray_16', 'gray_32', 'gray_64'], s=(64,64,3))
+    Create_forest(df=df_eval_trans, transformed_sub_dirs = ['gray_16', 'gray_32', 'gray_64'], s=(64,64,3))
 
     df_eval_trans = pd.read_pickle('../data/interim/numerical_data/scores_gray_x.pkl')
 
