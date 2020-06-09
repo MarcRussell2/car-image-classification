@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 from tensorflow import keras
 from tensorflow import debugging
 from tensorflow.keras import backend as K
-from tensorflow.keras.models import Sequential
+from tensorflow.keras.models import Sequential, load_model
 from tensorflow.keras.layers import Dense, Dropout, Activation, Flatten
 from tensorflow.keras.layers import Convolution2D, MaxPooling2D
 from tensorflow.keras.applications import VGG16
@@ -20,9 +20,9 @@ img_width, img_height = 64, 64
 
 train_data_dir = '../data/interim/image_data/binary/gray_64/train'
 validation_data_dir = '../data/interim/image_data/binary/gray_64/val'
-nb_train_samples = 480
-nb_validation_samples = 60
-epochs = 10000
+nb_train_samples = 3200
+nb_validation_samples = 800
+epochs = 100
 batch_size = 32
 
 if K.image_data_format() == 'channels_first':
@@ -37,10 +37,12 @@ model.add(MaxPooling2D(pool_size=(2, 2)))
 
 model.add(Convolution2D(32, (3, 3)))
 model.add(Activation('relu'))
+model.add(Dropout(0.5))
 model.add(MaxPooling2D(pool_size=(2, 2)))
 
 model.add(Convolution2D(64, (3, 3)))
 model.add(Activation('relu'))
+model.add(Dropout(0.7))
 model.add(MaxPooling2D(pool_size=(2, 2)))
 
 model.add(Flatten())
@@ -50,11 +52,14 @@ model.add(Dropout(0.5))
 model.add(Dense(1))
 model.add(Activation('sigmoid'))
 
-opt = keras.optimizers.RMSprop(learning_rate=0.00005,
+# model = load_model('aws_bi_64_10k.hdf5')
+
+opt = keras.optimizers.RMSprop(learning_rate=0.0005,
                                 rho=0.9,
                                 momentum=0.0,
                                 epsilon=1e-07,
                                 centered=False)
+
 model.compile(loss='binary_crossentropy',
               optimizer=opt,
               metrics=['accuracy'])
@@ -93,7 +98,7 @@ model.fit_generator(
 model.save('aws_try_128.hdf5')
 model.save_weights('aws_try_128.h5')
 
-del model
+model.summary()
 
 # model = VGG16(include_top=False,weights=None)
 
