@@ -38,8 +38,8 @@ class ImagePipeline(object):
         self.label_map = None
 
         # Image variables that are filled in when read() and vectorize()
-        self.img_lst2 = []
-        self.img_names2 = []
+        self.img_main_lst = []
+        self.img_names_lst = []
         self.features = None
         self.labels = None
 
@@ -76,8 +76,8 @@ class ImagePipeline(object):
         """
         Reset all the image related instance variables
         """
-        self.img_lst2 = []
-        self.img_names2 = []
+        self.img_main_lst = []
+        self.img_names_lst = []
         self.features = None
         self.labels = None
 
@@ -125,7 +125,7 @@ class ImagePipeline(object):
 
     def read(self, sub_dirs=['all']):
         """
-        Read images from each sub directories into a list of matrix (self.img_lst2)
+        Read images from each sub directories into a list of matrix (self.img_main_lst)
         :param sub_dirs: Tuple contain all the sub dir names, else default to all sub dirs
         """
         # Empty the variables containing the image arrays and image names, features and labels
@@ -136,11 +136,11 @@ class ImagePipeline(object):
 
         for sub_dir in self.sub_dirs:
             img_names = os.listdir(sub_dir)
-            self.img_names2.append(img_names)
+            self.img_names_lst.append(img_names)
 
             img_lst = [io.imread(os.path.join(sub_dir, fname))
                        for fname in img_names]
-            self.img_lst2.append(img_lst)
+            self.img_main_lst.append(img_lst)
 
     def save(self, keyword):
         """
@@ -161,8 +161,8 @@ class ImagePipeline(object):
         self._make_new_dir(new_sub_dirs[0])
 
         # Loop through the sub dirs and loop through images to save images to the respective subdir
-        # for new_sub_dir, img_names, img_lst in zip(new_sub_dirs, self.img_names2, self.img_lst2):
-        for img_folders, img_names, img_lst in zip(self.raw_sub_dir_names, self.img_names2, self.img_lst2):
+        # for new_sub_dir, img_names, img_lst in zip(new_sub_dirs, self.img_names_lst, self.img_main_lst):
+        for img_folders, img_names, img_lst in zip(self.raw_sub_dir_names, self.img_names_lst, self.img_main_lst):
             # sub_dir = self._path_relative_to_parent(img_folders)
             self._make_new_dir(os.path.join(new_sub_dirs[0], img_folders))
 
@@ -180,11 +180,11 @@ class ImagePipeline(object):
         """
         if sub_dir_idx == None:
             sub_dir_ind = self.label_map[sub_dir]
-            io.imshow(self.img_lst2[sub_dir_idx][img_idx])
+            io.imshow(self.img_main_lst[sub_dir_idx][img_idx])
             plt.show()
         elif sub_dir == None:
             print('\n displaying image... \n')
-            io.imshow(self.img_lst2[sub_dir_idx][img_idx])
+            io.imshow(self.img_main_lst[sub_dir_idx][img_idx])
             plt.show()
         else:
             raise Exception('Specify only a sub_dir_idx or a sub_dir name')
@@ -199,21 +199,21 @@ class ImagePipeline(object):
         # Apply to one test case
         if sub_dir is not None and img_idx is not None:
             sub_dir_ind = self.label_map[sub_dir]
-            img_arr = self.img_lst2[sub_dir_ind][img_idx]
+            img_arr = self.img_main_lst[sub_dir_ind][img_idx]
             img_arr = func(img_arr, **params).astype(float)
             io.imshow(img_arr)
             plt.show()
         # Apply the function and parameters to all the images
         else:
-            new_img_lst2 = []
-            for img_lst in self.img_lst2:
-                new_img_lst2.append(
+            new_img_main_lst = []
+            for img_lst in self.img_main_lst:
+                new_img_main_lst.append(
                     [func(img_arr, **params).astype(float) for img_arr in img_lst])
-            self.img_lst2 = new_img_lst2
+            self.img_main_lst = new_img_main_lst
 
     def grayscale(self, sub_dir=None, img_idx=None):
         """
-        Grayscale all the images in self.img_lst2
+        Grayscale all the images in self.img_main_lst
         :param sub_dir: The sub dir (if you want to test the transformation on 1 image)
         :param img_idx: The index of the image within the chosen sub dir
         """
@@ -221,7 +221,7 @@ class ImagePipeline(object):
 
     def canny(self, sub_dir=None, img_idx=None):
         """
-        Apply the canny edge detection algorithm to all the images in self.img_lst2
+        Apply the canny edge detection algorithm to all the images in self.img_main_lst
         :param sub_dir: The sub dir (if you want to test the transformation on 1 image)
         :param img_idx: The index of the image within the chosen sub dir
         """
@@ -229,7 +229,7 @@ class ImagePipeline(object):
 
     def tv_denoise(self, weight=2, multichannel=True, sub_dir=None, img_idx=None):
         """
-        Apply to total variation denoise to all the images in self.img_lst2
+        Apply to total variation denoise to all the images in self.img_main_lst
         :param sub_dir: The sub dir (if you want to test the transformation on 1 image)
         :param img_idx: The index of the image within the chosen sub dir
         """
@@ -239,7 +239,7 @@ class ImagePipeline(object):
 
     def resize(self, shape, save=False):
         """
-        Resize all images in self.img_lst2 to a uniform shape
+        Resize all images in self.img_main_lst to a uniform shape
         :param shape: A tuple of 2 or 3 dimensions depending on if your images are grayscaled or not
         :param save: Boolean to save the images in new directories or not
         """
@@ -254,7 +254,7 @@ class ImagePipeline(object):
         row represents an image
         """
         row_tup = tuple(img_arr.ravel()[np.newaxis, :]
-                        for img_lst in self.img_lst2 for img_arr in img_lst)
+                        for img_lst in self.img_main_lst for img_arr in img_lst)
         self.test = row_tup
         self.features = np.r_[row_tup]
 
@@ -264,7 +264,7 @@ class ImagePipeline(object):
         """
         # Get the labels with the dimensions of the number of image files
         self.labels = np.concatenate([np.repeat(i, len(img_names))
-                                      for i, img_names in enumerate(self.img_names2)])
+                                      for i, img_names in enumerate(self.img_names_lst)])
 
     def vectorize(self):
         """
@@ -278,8 +278,8 @@ class ImagePipeline(object):
     def prep_X_y(self):
         X = 0
         y = 0
-        self.img_lst2
-        for i in range(len(self.img_lst2)):
+        self.img_main_lst
+        for i in range(len(self.img_main_lst)):
             #     if limit == None:
             #         images = load_image_folder(folder_list[i])
             #     else:
@@ -290,14 +290,14 @@ class ImagePipeline(object):
             # mirrored = mirror_images(rot_crop)
             # if False:
             if type(X) == int:
-                X = np.array(self.img_lst2)
+                X = np.array(self.img_main_lst)
             else:
-                X = np.vstack((X, np.array(self.img_lst2)))
+                X = np.vstack((X, np.array(self.img_main_lst)))
             # if False:
             if type(y) == int:
-                y = np.zeros(len(self.img_lst2))
+                y = np.zeros(len(self.img_main_lst))
             else:
-                y_arr = np.zeros(len(self.img_lst2))
+                y_arr = np.zeros(len(self.img_main_lst))
                 y_arr.fill(i)
                 y = np.append(y, y_arr)
         print('X shape: {} ----- y shape: {}'.format(X.shape, y.shape))
